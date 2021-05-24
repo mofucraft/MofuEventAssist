@@ -24,7 +24,7 @@ import java.util.Objects;
 
 public class MessageSendAction extends AutomationAction {
 
-    protected MessageSendAction(GameEvent gameEvent, ActionOptions actionOptions) {
+    public MessageSendAction(GameEvent gameEvent, ActionOptions actionOptions) {
         super(gameEvent, actionOptions);
     }
 

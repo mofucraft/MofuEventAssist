@@ -16,8 +16,10 @@
 
 package page.nafuchoco.mofu.mofueventassist.automation.actions;
 
+import lombok.AllArgsConstructor;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
 
+@AllArgsConstructor
 public class MessageSendActionOptions implements ActionOptions {
     private String message;
 

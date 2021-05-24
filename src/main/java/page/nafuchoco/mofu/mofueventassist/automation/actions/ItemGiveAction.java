@@ -27,7 +27,7 @@ import java.util.Objects;
 
 public class ItemGiveAction extends AutomationAction {
 
-    protected ItemGiveAction(GameEvent gameEvent, ActionOptions actionOptions) {
+    public ItemGiveAction(GameEvent gameEvent, ActionOptions actionOptions) {
         super(gameEvent, actionOptions);
     }
 

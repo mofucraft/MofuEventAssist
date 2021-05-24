@@ -21,7 +21,7 @@ import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
 
 public class StartAnnounceAction extends AutomationAction {
 
-    protected StartAnnounceAction(GameEvent gameEvent, ActionOptions actionOptions) {
+    public StartAnnounceAction(GameEvent gameEvent, ActionOptions actionOptions) {
         super(gameEvent, actionOptions);
     }
 

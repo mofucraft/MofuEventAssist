@@ -16,9 +16,11 @@
 
 package page.nafuchoco.mofu.mofueventassist.automation.actions;
 
+import lombok.AllArgsConstructor;
 import org.bukkit.*;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
 
+@AllArgsConstructor
 public class SoundPlayActionOptions implements ActionOptions {
     // See below for a list of supported sounds.
     // https://papermc.io/javadocs/paper/1.16/org/bukkit/Sound.html

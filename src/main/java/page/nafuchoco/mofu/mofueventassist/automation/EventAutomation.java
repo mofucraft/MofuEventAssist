@@ -16,10 +16,12 @@
 
 package page.nafuchoco.mofu.mofueventassist.automation;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import page.nafuchoco.mofu.mofueventassist.automation.actions.AutomationAction;
 
 import java.util.List;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class EventAutomation {
     private final List<AutomationAction> actions;
     private final int automationDelayTime;
@@ -27,5 +29,19 @@ public class EventAutomation {
     public EventAutomation(List<AutomationAction> actions, int automationDelayTime) {
         this.actions = actions;
         this.automationDelayTime = automationDelayTime;
+    }
+
+    public void execute() {
+        for (AutomationAction action : actions) {
+
+        }
+    }
+
+    public static class AutomationExecutor implements Runnable {
+
+        @Override
+        public void run() {
+
+        }
     }
 }

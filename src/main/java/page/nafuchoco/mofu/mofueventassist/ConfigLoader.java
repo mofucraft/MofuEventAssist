@@ -22,7 +22,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class ConfigLoader {
     private static final MofuEventAssist INSTANCE = MofuEventAssist.getInstance();
 
-    private static EventAssistConfig eventAssistConfig;
+    private EventAssistConfig eventAssistConfig;
 
     public void reloadConfig() {
         INSTANCE.reloadConfig();

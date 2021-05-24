@@ -24,7 +24,7 @@ import java.util.Objects;
 
 public class SoundPlayAction extends AutomationAction {
 
-    protected SoundPlayAction(GameEvent gameEvent, ActionOptions actionOptions) {
+    public SoundPlayAction(GameEvent gameEvent, ActionOptions actionOptions) {
         super(gameEvent, actionOptions);
     }
 

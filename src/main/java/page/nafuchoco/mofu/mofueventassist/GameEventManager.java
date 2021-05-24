@@ -16,18 +16,21 @@
 
 package page.nafuchoco.mofu.mofueventassist;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import page.nafuchoco.mofu.mofueventassist.database.EventsTable;
 import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
 
 public class GameEventManager {
-    private static final EventsTable eventsTable = MofuEventAssist.getInstance().getEventsTable();
+    private final EventsTable eventsTable;
     private final List<GameEvent> upcomingEvents;
     private final List<GameEvent> currentEvents;
 
-    public GameEventManager() throws SQLException {
+    public GameEventManager(EventsTable eventsTable) throws SQLException {
+        this.eventsTable = eventsTable;
         upcomingEvents = eventsTable.getUpcomingEvents();
         currentEvents = eventsTable.getCurrentEvents();
     }
@@ -46,14 +49,33 @@ public class GameEventManager {
     }
 
     public void endEvent(GameEvent event) {
-
+        if (event.getEventOptions().isEnableStartAnnounce())
+            event.getEventOptions().getEndAutomations();
     }
 
     public void registerEvent(GameEvent event) {
-
+        try {
+            eventsTable.registerEvent(event);
+            upcomingEvents.add(event);
+        } catch (JsonProcessingException | SQLException e) {
+            e.printStackTrace();
+            MofuEventAssist.getInstance().getLogger().log(
+                    Level.WARNING,
+                    "An error has occurred while registering event information.",
+                    e
+            );
+        }
     }
 
     public void deleteEvent(GameEvent event) {
-
+        try {
+            eventsTable.deleteEvent(event.getEventId());
+        } catch (SQLException e) {
+            MofuEventAssist.getInstance().getLogger().log(
+                    Level.WARNING,
+                    "An error has occurred while registering event information.",
+                    e
+            );
+        }
     }
 }

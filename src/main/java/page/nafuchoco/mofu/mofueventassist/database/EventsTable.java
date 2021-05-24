@@ -34,11 +34,11 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class EventsTable extends DatabaseTable {
-    private static final MofuEventAssist INSTANCE = MofuEventAssist.getInstance();
+    //private static final MofuEventAssist INSTANCE = MofuEventAssist.getInstance();
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public EventsTable(String tablename, DatabaseConnector connector) {
-        super(tablename, connector);
+    public EventsTable(String prefix, String tablename, DatabaseConnector connector) {
+        super(prefix, tablename, connector);
     }
 
     public void createTable() throws SQLException {
@@ -59,7 +59,7 @@ public class EventsTable extends DatabaseTable {
                 return events;
             }
         } catch (JsonProcessingException e) {
-            INSTANCE.getLogger().log(Level.WARNING, "An error occurred during Json processing.", e);
+            MofuEventAssist.getInstance().getLogger().log(Level.WARNING, "An error occurred during Json processing.", e);
         }
         return new ArrayList<>();
     }
@@ -76,7 +76,7 @@ public class EventsTable extends DatabaseTable {
                 return events;
             }
         } catch (JsonProcessingException e) {
-            INSTANCE.getLogger().log(Level.WARNING, "An error occurred during Json processing.", e);
+            MofuEventAssist.getInstance().getLogger().log(Level.WARNING, "An error occurred during Json processing.", e);
         }
         return new ArrayList<>();
     }
@@ -93,7 +93,7 @@ public class EventsTable extends DatabaseTable {
                 return events;
             }
         } catch (JsonProcessingException e) {
-            INSTANCE.getLogger().log(Level.WARNING, "An error occurred during Json processing.", e);
+            MofuEventAssist.getInstance().getLogger().log(Level.WARNING, "An error occurred during Json processing.", e);
         }
         return new ArrayList<>();
     }
@@ -110,7 +110,7 @@ public class EventsTable extends DatabaseTable {
                 return events;
             }
         } catch (JsonProcessingException e) {
-            INSTANCE.getLogger().log(Level.WARNING, "An error occurred during Json processing.", e);
+            MofuEventAssist.getInstance().getLogger().log(Level.WARNING, "An error occurred during Json processing.", e);
         }
         return new ArrayList<>();
     }

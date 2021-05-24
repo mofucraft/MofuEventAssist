@@ -51,6 +51,7 @@ public final class MofuEventAssist extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         configLoader = new ConfigLoader();
+        configLoader.reloadConfig();
 
         // SQL Initialization
         connector = new DatabaseConnector(getEventAssistConfig().getDatabaseType(),
@@ -58,11 +59,11 @@ public final class MofuEventAssist extends JavaPlugin {
                 getEventAssistConfig().getDatabase(),
                 getEventAssistConfig().getUsername(),
                 getEventAssistConfig().getPassword());
-        eventsTable = new EventsTable("events", connector);
+        eventsTable = new EventsTable(getEventAssistConfig().getTablePrefix(), "events", connector);
         try {
             eventsTable.createTable();
             // Load events
-            eventManager = new GameEventManager();
+            eventManager = new GameEventManager(eventsTable);
         } catch (SQLException e) {
             getInstance().getLogger().log(Level.WARNING, "An error occurred while initializing the database table.", e);
             setEnabled(false);
