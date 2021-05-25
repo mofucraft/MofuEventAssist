@@ -16,11 +16,23 @@
 
 package page.nafuchoco.mofu.mofueventassist.automation.actions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
 import page.nafuchoco.mofu.mofueventassist.automation.EventAutomationAction;
 import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = ItemGiveAction.class),
+        @JsonSubTypes.Type(value = MessageSendAction.class),
+        @JsonSubTypes.Type(value = SoundPlayAction.class),
+        @JsonSubTypes.Type(value = TitleShowAction.class)
+}
+)
 public abstract class AutomationAction implements EventAutomationAction {
+    @JsonIgnore
     private final GameEvent gameEvent;
     private final ActionOptions actionOptions;
 
@@ -29,6 +41,7 @@ public abstract class AutomationAction implements EventAutomationAction {
         this.actionOptions = actionOptions;
     }
 
+    @JsonIgnore
     @Override
     public GameEvent getEvent() {
         return gameEvent;
