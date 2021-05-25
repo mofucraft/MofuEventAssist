@@ -21,7 +21,7 @@ import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
 
 public class CountDownAction extends AutomationAction {
 
-    protected CountDownAction(GameEvent gameEvent, ActionOptions actionOptions) {
+    public CountDownAction(GameEvent gameEvent, ActionOptions actionOptions) {
         super(gameEvent, actionOptions);
     }
 

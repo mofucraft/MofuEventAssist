@@ -37,8 +37,8 @@ public class EventsTable extends DatabaseTable {
     private static final MofuEventAssist INSTANCE = MofuEventAssist.getInstance();
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public EventsTable(String tablename, DatabaseConnector connector) {
-        super(tablename, connector);
+    public EventsTable(String prefix, String tablename, DatabaseConnector connector) {
+        super(prefix, tablename, connector);
     }
 
     public void createTable() throws SQLException {

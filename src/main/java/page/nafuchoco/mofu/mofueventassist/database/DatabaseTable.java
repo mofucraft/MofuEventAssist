@@ -16,19 +16,18 @@
 
 package page.nafuchoco.mofu.mofueventassist.database;
 
-import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public abstract class DatabaseTable {
-    private static final String PREFIX = MofuEventAssist.getEventAssistConfig().getTablePrefix();
+    private final String prefix;
     private final String tablename;
     private final DatabaseConnector connector;
 
-    public DatabaseTable(String tablename, DatabaseConnector connector) {
-        this.tablename = PREFIX + tablename;
+    public DatabaseTable(String prefix, String tablename, DatabaseConnector connector) {
+        this.prefix = prefix;
+        this.tablename = prefix + tablename;
         this.connector = connector;
     }
 

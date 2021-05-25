@@ -17,22 +17,30 @@
 package page.nafuchoco.mofu.mofueventassist;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import page.nafuchoco.mofu.mofueventassist.command.RegisterCommand;
+import page.nafuchoco.mofu.mofueventassist.command.SubCommandExecutor;
 import page.nafuchoco.mofu.mofueventassist.database.DatabaseConnector;
 import page.nafuchoco.mofu.mofueventassist.database.EventsTable;
 
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 
 public final class MofuEventAssist extends JavaPlugin {
     private static MofuEventAssist instance;
-    private static ConfigLoader configLoader;
-    private static EventAssistConfig config;
+    private ConfigLoader configLoader;
+    private EventAssistConfig config;
 
-    private static DatabaseConnector connector;
-    private static EventsTable eventsTable;
+    private DatabaseConnector connector;
+    private EventsTable eventsTable;
 
-    private static GameEventManager eventManager;
+    private GameEventManager eventManager;
 
 
     public static MofuEventAssist getInstance() {
@@ -41,7 +49,7 @@ public final class MofuEventAssist extends JavaPlugin {
         return instance;
     }
 
-    public static EventAssistConfig getEventAssistConfig() {
+    public EventAssistConfig getEventAssistConfig() {
         if (config != null)
             configLoader.getConfig();
         return config;
@@ -58,11 +66,11 @@ public final class MofuEventAssist extends JavaPlugin {
                 getEventAssistConfig().getDatabase(),
                 getEventAssistConfig().getUsername(),
                 getEventAssistConfig().getPassword());
-        eventsTable = new EventsTable("events", connector);
+        eventsTable = new EventsTable(getEventAssistConfig().getTablePrefix(), "events", connector);
         try {
             eventsTable.createTable();
             // Load events
-            eventManager = new GameEventManager();
+            eventManager = new GameEventManager(eventsTable);
         } catch (SQLException e) {
             getInstance().getLogger().log(Level.WARNING, "An error occurred while initializing the database table.", e);
             setEnabled(false);
@@ -76,10 +84,29 @@ public final class MofuEventAssist extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        Bukkit.getServer().getScheduler().cancelTasks(this);
     }
 
-    public EventsTable getEventsTable() {
-        return eventsTable;
+    @Override
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        SubCommandExecutor executor = null;
+
+        if (args.length == 0) {
+            // Command help information
+        } else switch (args[0]) {
+            case "register":
+                executor = new RegisterCommand();
+                break;
+        }
+
+        if (executor != null)
+            return executor.onCommand(sender, command, label, Arrays.copyOfRange(args, 1, args.length));
+        return true;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        return Arrays.asList("");
     }
 
     public GameEventManager getEventManager() {

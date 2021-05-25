@@ -28,7 +28,7 @@ import java.util.Objects;
 
 public class TitleShowAction extends AutomationAction {
 
-    protected TitleShowAction(GameEvent gameEvent, ActionOptions actionOptions) {
+    public TitleShowAction(GameEvent gameEvent, ActionOptions actionOptions) {
         super(gameEvent, actionOptions);
     }
 

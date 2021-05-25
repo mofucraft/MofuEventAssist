@@ -16,11 +16,13 @@
 
 package page.nafuchoco.mofu.mofueventassist.automation.actions;
 
+import lombok.AllArgsConstructor;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
 
+@AllArgsConstructor
 public class ItemGiveActionOptions implements ActionOptions {
-    private String materialName;
-    private String amount;
+    private final String materialName;
+    private final String amount;
 
     public String getMaterialName() {
         return materialName;

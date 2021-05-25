@@ -16,13 +16,15 @@
 
 package page.nafuchoco.mofu.mofueventassist.automation.actions;
 
+import lombok.AllArgsConstructor;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
 
+@AllArgsConstructor
 public class TitleShowActionOptions implements ActionOptions {
-    private String title;
-    private String subTitle;
-    private String titleColorName;
-    private String subTitleColorName;
+    private final String title;
+    private final String subTitle;
+    private final String titleColorName;
+    private final String subTitleColorName;
 
     public String getTitle() {
         return title;

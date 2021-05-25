@@ -26,7 +26,7 @@ import java.util.*;
 public class AutomationBuilder {
     private final GameEvent gameEvent;
 
-    private List<AutomationAction> actions;
+    private final List<AutomationAction> actions;
     private int actionDelayTime = 1;
 
     public AutomationBuilder(GameEvent gameEvent) {
