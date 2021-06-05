@@ -18,12 +18,31 @@ package page.nafuchoco.mofu.mofueventassist.command;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class RegisterCommand implements SubCommandExecutor {
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class CreateCommand implements SubCommandExecutor {
+    private final Map<Player, Object> workspace = new HashMap<>();
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (args.length == 0) {
+
+        } else if (args[0].equalsIgnoreCase("new")) {
+
+        } else if (args[0].equalsIgnoreCase("")) {
+
+        }
         return false;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        return null;
     }
 }

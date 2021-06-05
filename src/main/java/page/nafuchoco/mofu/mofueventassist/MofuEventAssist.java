@@ -22,7 +22,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import page.nafuchoco.mofu.mofueventassist.command.RegisterCommand;
+import page.nafuchoco.mofu.mofueventassist.command.CreateCommand;
+import page.nafuchoco.mofu.mofueventassist.command.HelpCommand;
 import page.nafuchoco.mofu.mofueventassist.command.SubCommandExecutor;
 import page.nafuchoco.mofu.mofueventassist.database.DatabaseConnector;
 import page.nafuchoco.mofu.mofueventassist.database.EventsTable;
@@ -87,26 +88,38 @@ public final class MofuEventAssist extends JavaPlugin {
         Bukkit.getServer().getScheduler().cancelTasks(this);
     }
 
+    private static final SubCommandExecutor HELP_COMMAND_EXECUTOR = new HelpCommand();
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        SubCommandExecutor executor = null;
-
-        if (args.length == 0) {
-            // Command help information
-        } else switch (args[0]) {
-            case "register":
-                executor = new RegisterCommand();
-                break;
-        }
+        SubCommandExecutor executor = getSubCommand(args);
 
         if (executor != null)
             return executor.onCommand(sender, command, label, Arrays.copyOfRange(args, 1, args.length));
-        return true;
+        else
+            return HELP_COMMAND_EXECUTOR.onCommand(sender, command, label, args);
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        return Arrays.asList("");
+        SubCommandExecutor executor = getSubCommand(args);
+
+        if (executor != null)
+            return executor.onTabComplete(sender, command, alias, Arrays.copyOfRange(args, 1, args.length));
+        return null;
+    }
+
+    private SubCommandExecutor getSubCommand(@NotNull String[] args) {
+        SubCommandExecutor executor = null;
+
+        if (args.length != 0) {
+            switch (args[0]) {
+                case "register":
+                    executor = new CreateCommand();
+                    break;
+            }
+        }
+        return executor;
     }
 
     public GameEventManager getEventManager() {
