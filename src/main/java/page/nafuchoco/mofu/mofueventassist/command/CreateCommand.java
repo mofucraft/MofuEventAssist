@@ -21,13 +21,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import page.nafuchoco.mofu.mofueventassist.element.GameEventBuilder;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CreateCommand implements SubCommandExecutor {
-    private final Map<Player, Object> workspace = new HashMap<>();
+    private final Map<Player, GameEventBuilder> workspace = new HashMap<>();
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {

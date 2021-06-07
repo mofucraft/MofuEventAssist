@@ -16,6 +16,7 @@
 
 package page.nafuchoco.mofu.mofueventassist.element;
 
+import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Location;
 
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Getter
 public class GameEventBuilder {
     private final UUID eventId;
     private final EventOptions eventOptions;
@@ -38,6 +40,23 @@ public class GameEventBuilder {
         eventId = UUID.randomUUID();
         eventOptions = new EventOptions();
         entrant = new ArrayList<>();
+    }
+
+    public DefaultGameEvent build() {
+        if (eventName == null || eventDescription == null || eventOwner == null)
+            throw new IllegalStateException("The configuration required for the build has not been completed.");
+
+        return new DefaultGameEvent(
+                eventId,
+                eventName,
+                eventDescription,
+                eventOwner,
+                eventStartTime,
+                eventEndTime,
+                eventLocation,
+                entrant,
+                eventOptions
+        );
     }
 
     public GameEventBuilder setEventName(@NonNull String eventName) {
