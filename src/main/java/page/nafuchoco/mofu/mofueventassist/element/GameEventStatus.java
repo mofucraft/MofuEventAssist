@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package page.nafuchoco.mofu.mofueventassist.automation.actions;
+package page.nafuchoco.mofu.mofueventassist.element;
 
-import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
-
-public record ItemGiveActionOptions(String materialName, String amount) implements ActionOptions {
+public enum GameEventStatus {
+    UPCOMING, HOLDING, ENDED
 }

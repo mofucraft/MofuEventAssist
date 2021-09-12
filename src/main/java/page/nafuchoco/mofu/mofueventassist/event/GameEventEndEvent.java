@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-package page.nafuchoco.mofu.mofueventassist.automation.actions;
+package page.nafuchoco.mofu.mofueventassist.event;
 
-import org.bukkit.Bukkit;
-import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
+import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
+import page.nafuchoco.mofu.mofueventassist.element.GameEventStatus;
 
-import java.util.Objects;
+public class GameEventEndEvent extends GameEventStatusUpdateEvent {
+    private static final HandlerList handlers = new HandlerList();
 
-public class MessageSendAction extends AutomationAction {
+    public GameEventEndEvent(GameEvent gameEvent) {
+        super(gameEvent, GameEventStatus.HOLDING, GameEventStatus.ENDED);
+    }
 
-    public MessageSendAction(GameEvent gameEvent, ActionOptions actionOptions) {
-        super(gameEvent, actionOptions);
+    
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     @Override
-    public void execute() {
-        MessageSendActionOptions options = (MessageSendActionOptions) getOptions();
-        getEvent().getEntrant().stream()
-                .map(Bukkit::getPlayer)
-                .filter(Objects::nonNull)
-                .forEach(p -> p.sendMessage(options.message()));
+    public @NotNull HandlerList getHandlers() {
+        return handlers;
     }
 }

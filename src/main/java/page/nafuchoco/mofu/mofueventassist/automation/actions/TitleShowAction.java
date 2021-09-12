@@ -36,9 +36,9 @@ public class TitleShowAction extends AutomationAction {
     public void execute() {
         TitleShowActionOptions options = (TitleShowActionOptions) getOptions();
         TextComponent titleComponent =
-                Component.text(options.getTitle()).color(NamedTextColor.NAMES.value(options.getTitleColorName()));
+                Component.text(options.title()).color(NamedTextColor.NAMES.value(options.titleColorName()));
         TextComponent subTitleComponent =
-                Component.text(options.getSubTitle()).color(NamedTextColor.NAMES.value(options.getSubTitleColorName()));
+                Component.text(options.subTitle()).color(NamedTextColor.NAMES.value(options.subTitleColorName()));
         getEvent().getEntrant().stream()
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)

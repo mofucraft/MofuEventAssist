@@ -18,7 +18,9 @@ package page.nafuchoco.mofu.mofueventassist.element;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import page.nafuchoco.mofu.mofueventassist.event.GameEventStatusUpdateEvent;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,9 +32,16 @@ public class DefaultGameEvent implements GameEvent {
     private final String eventName;
     private final String eventDescription;
     private final UUID eventOwner;
+    private GameEventStatus eventStatus;
     private final long eventStartTime;
     private final long eventEndTime;
     private final Location eventLocation;
     private final List<UUID> entrant;
     private final EventOptions eventOptions;
+
+    public void setEventStatus(GameEventStatus eventStatus) {
+        var oldStatus = GameEventStatus.valueOf(eventStatus.name());
+        this.eventStatus = eventStatus;
+        Bukkit.getServer().getPluginManager().callEvent(new GameEventStatusUpdateEvent(this, oldStatus, eventStatus));
+    }
 }

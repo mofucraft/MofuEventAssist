@@ -18,6 +18,7 @@ package page.nafuchoco.mofu.mofueventassist.automation;
 
 import page.nafuchoco.mofu.mofueventassist.automation.actions.AutomationAction;
 
+import java.util.Collections;
 import java.util.List;
 
 public class EventAutomation {
@@ -27,5 +28,13 @@ public class EventAutomation {
     public EventAutomation(List<AutomationAction> actions, int automationDelayTime) {
         this.actions = actions;
         this.automationDelayTime = automationDelayTime;
+    }
+
+    public List<AutomationAction> getActions() {
+        return Collections.unmodifiableList(actions);
+    }
+
+    public int getAutomationDelayTime() {
+        return automationDelayTime;
     }
 }

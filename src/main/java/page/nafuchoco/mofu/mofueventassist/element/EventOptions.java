@@ -21,9 +21,12 @@ import page.nafuchoco.mofu.mofueventassist.automation.EventAutomation;
 
 @Data
 public class EventOptions {
+    /*
     private boolean enableStartAnnounce;
     private boolean enableStartCountdown;
     private boolean enableAutoDelete;
+    */
+    
     private EventAutomation startAutomation;
-    private EventAutomation endAutomations;
+    private EventAutomation endAutomation;
 }

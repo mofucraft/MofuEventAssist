@@ -5,8 +5,8 @@ MofuCraft内で実施されるイベントの管理・運営を補佐するプ�
 
 ## Requirements
 
-- Java 11 or later (**Required**)
-- Paper 1.16 ~ (Paper 1.16.5 Tested) \[**Not Support Spigot**]
+- Java 16 or later (**Required**)
+- Paper 1.17 ~ (Paper 1.17 Tested) \[**Not Support Spigot**]
 
 ## About Use
 

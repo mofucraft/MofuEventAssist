@@ -16,22 +16,27 @@
 
 package page.nafuchoco.mofu.mofueventassist;
 
+import org.bukkit.Bukkit;
+import page.nafuchoco.mofu.mofueventassist.element.GameEventStatus;
+import page.nafuchoco.mofu.mofueventassist.event.GameEventEndEvent;
+import page.nafuchoco.mofu.mofueventassist.event.GameEventStartEvent;
+
 import java.util.Date;
 
 public class EventTimer implements Runnable {
-    private static final GameEventManager eventManager = MofuEventAssist.getInstance().getEventManager();
+    private static final GameEventRegistry eventRegistry = MofuEventAssist.getInstance().getEventRegistry();
 
     @Override
     public void run() {
         var date = new Date();
-        eventManager.getUpcomingEvents().forEach(event -> {
+        eventRegistry.getEvents(GameEventStatus.UPCOMING).forEach(event -> {
             if (event.getEventStartTime() < date.getTime())
-                eventManager.startEvent(event);
+                Bukkit.getServer().getPluginManager().callEvent(new GameEventStartEvent(event));
         });
 
-        eventManager.getCurrentEvents().forEach(event -> {
+        eventRegistry.getEvents(GameEventStatus.HOLDING).forEach(event -> {
             if (event.getEventEndTime() == 0 || event.getEventEndTime() > date.getTime())
-                eventManager.endEvent(event);
+                Bukkit.getServer().getPluginManager().callEvent(new GameEventEndEvent(event));
         });
     }
 }

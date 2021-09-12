@@ -16,14 +16,7 @@
 
 package page.nafuchoco.mofu.mofueventassist.automation.actions;
 
-import lombok.AllArgsConstructor;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
 
-@AllArgsConstructor
-public class MessageSendActionOptions implements ActionOptions {
-    private final String message;
-
-    public String getMessage() {
-        return message;
-    }
+public record MessageSendActionOptions(String message) implements ActionOptions {
 }

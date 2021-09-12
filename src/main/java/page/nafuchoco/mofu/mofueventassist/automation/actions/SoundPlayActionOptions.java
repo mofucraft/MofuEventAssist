@@ -16,22 +16,21 @@
 
 package page.nafuchoco.mofu.mofueventassist.automation.actions;
 
-import lombok.AllArgsConstructor;
 import org.bukkit.*;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
 
-@AllArgsConstructor
-public class SoundPlayActionOptions implements ActionOptions {
-    // See below for a list of supported sounds.
-    // https://papermc.io/javadocs/paper/1.16/org/bukkit/Sound.html
-    private final String soundType;
-    // See below for a list of supported sound categories.
-    // https://papermc.io/javadocs/paper/1.16/org/bukkit/SoundCategory.html
-    private final String soundCategory;
-    private final String location; // TODO: 2021/05/20 プレイヤーの場所からの相対位置を指定できるように
-    private final String volume;
-    private final String pitch;
-
+/**
+ * @param soundType     See below for a list of supported sounds.\n
+ *                      https://papermc.io/javadocs/paper/1.17/org/bukkit/Sound.html
+ * @param soundCategory See below for a list of supported sound categories.\n
+ *                      https://papermc.io/javadocs/paper/1.17/org/bukkit/SoundCategory.html
+ * @param location      Location to play sound. (Format: World, LocationX, LocationY, LocationZ)
+ * @param volume        Volume of the sound to play.
+ * @param pitch         Pitch of the sound to play.
+ */
+public record SoundPlayActionOptions(String soundType, String soundCategory,
+                                     String location, String volume,
+                                     String pitch) implements ActionOptions {
 
     public Sound getSoundType() {
         return Sound.valueOf(soundType);

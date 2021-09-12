@@ -19,6 +19,8 @@ package page.nafuchoco.mofu.mofueventassist;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +29,9 @@ import page.nafuchoco.mofu.mofueventassist.command.HelpCommand;
 import page.nafuchoco.mofu.mofueventassist.command.SubCommandExecutor;
 import page.nafuchoco.mofu.mofueventassist.database.DatabaseConnector;
 import page.nafuchoco.mofu.mofueventassist.database.EventsTable;
+import page.nafuchoco.mofu.mofueventassist.event.GameEventEndEvent;
+import page.nafuchoco.mofu.mofueventassist.event.GameEventStartEvent;
+import page.nafuchoco.mofu.mofueventassist.event.GameEventStatusUpdateEvent;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -41,7 +46,7 @@ public final class MofuEventAssist extends JavaPlugin {
     private DatabaseConnector connector;
     private EventsTable eventsTable;
 
-    private GameEventManager eventManager;
+    private GameEventRegistry eventRegistry;
 
 
     public static MofuEventAssist getInstance() {
@@ -71,7 +76,7 @@ public final class MofuEventAssist extends JavaPlugin {
         try {
             eventsTable.createTable();
             // Load events
-            eventManager = new GameEventManager(eventsTable);
+            eventRegistry = new GameEventRegistry(eventsTable);
         } catch (SQLException e) {
             getInstance().getLogger().log(Level.WARNING, "An error occurred while initializing the database table.", e);
             setEnabled(false);
@@ -87,6 +92,7 @@ public final class MofuEventAssist extends JavaPlugin {
         // Plugin shutdown logic
         Bukkit.getServer().getScheduler().cancelTasks(this);
     }
+
 
     private static final SubCommandExecutor HELP_COMMAND_EXECUTOR = new HelpCommand();
 
@@ -122,7 +128,33 @@ public final class MofuEventAssist extends JavaPlugin {
         return executor;
     }
 
-    public GameEventManager getEventManager() {
-        return eventManager;
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onGameEventStatusUpdateEvent(GameEventStatusUpdateEvent event) {
+        try {
+            eventsTable.updateEventStatus(event.getGameEvent());
+            getEventRegistry().changeEventStatus(event.getGameEvent(), event.getOldStatus(), event.getNewStatus());
+        } catch (SQLException e) {
+            MofuEventAssist.getInstance().getLogger().log(
+                    Level.WARNING,
+                    "An error has occurred while updating event information.",
+                    e
+            );
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onGameEventStartEvent(GameEventStartEvent event) {
+        event.getGameEvent().getEventOptions().getStartAutomation().getActions().forEach(action -> action.execute());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onGameEventEndEvent(GameEventEndEvent event) {
+        event.getGameEvent().getEventOptions().getEndAutomation().getActions().forEach(action -> action.execute());
+    }
+
+
+    public GameEventRegistry getEventRegistry() {
+        return eventRegistry;
     }
 }

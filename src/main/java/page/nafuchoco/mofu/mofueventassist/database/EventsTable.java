@@ -25,6 +25,7 @@ import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
 import page.nafuchoco.mofu.mofueventassist.element.DefaultGameEvent;
 import page.nafuchoco.mofu.mofueventassist.element.EventOptions;
 import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
+import page.nafuchoco.mofu.mofueventassist.element.GameEventStatus;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -43,8 +44,8 @@ public class EventsTable extends DatabaseTable {
 
     public void createTable() throws SQLException {
         super.createTable("id VARCHAR(36) PRIMARY KEY, event_name VARCHAR(32) NOT NULL, description VARCHAR(120), " +
-                "owner_id VARCHAR(36) NOT NULL, start_date DATETIME, end_date DATETIME DEFAULT 0, location JSON, entrant JSON, " +
-                "event_options JSON");
+                "owner_id VARCHAR(36) NOT NULL, event_status VARCHAR(16) NOT NULL, start_date DATETIME, " +
+                "end_date DATETIME DEFAULT 0, location JSON, entrant JSON, event_options JSON");
     }
 
     public List<GameEvent> getAllEvents(final int limit) throws SQLException {
@@ -65,44 +66,23 @@ public class EventsTable extends DatabaseTable {
     }
 
     public List<GameEvent> getUpcomingEvents() throws SQLException {
-        try (var connection = getConnector().getConnection();
-             var ps = connection.prepareStatement(
-                     "SELECT * FROM " + getTablename() + " WHERE start_date >= NOW() OR end_date = 0"
-             )) {
-            try (ResultSet resultSet = ps.executeQuery()) {
-                var events = new ArrayList<GameEvent>();
-                while (resultSet.next())
-                    events.add(parseResult(resultSet));
-                return events;
-            }
-        } catch (JsonProcessingException e) {
-            INSTANCE.getLogger().log(Level.WARNING, "An error occurred during Json processing.", e);
-        }
-        return new ArrayList<>();
+        return getSpecifiedStatusEvents(GameEventStatus.UPCOMING);
     }
 
-    public List<GameEvent> getCurrentEvents() throws SQLException {
-        try (var connection = getConnector().getConnection();
-             var ps = connection.prepareStatement(
-                     "SELECT * FROM " + getTablename() + " WHERE start_date < NOW() AND (end_date >= NOW() OR end_date = 0)"
-             )) {
-            try (ResultSet resultSet = ps.executeQuery()) {
-                var events = new ArrayList<GameEvent>();
-                while (resultSet.next())
-                    events.add(parseResult(resultSet));
-                return events;
-            }
-        } catch (JsonProcessingException e) {
-            INSTANCE.getLogger().log(Level.WARNING, "An error occurred during Json processing.", e);
-        }
-        return new ArrayList<>();
+    public List<GameEvent> getHoldingEvents() throws SQLException {
+        return getSpecifiedStatusEvents(GameEventStatus.HOLDING);
     }
 
-    public List<GameEvent> getPastEvents() throws SQLException {
+    public List<GameEvent> getEndedEvents() throws SQLException {
+        return getSpecifiedStatusEvents(GameEventStatus.ENDED);
+    }
+
+    public List<GameEvent> getSpecifiedStatusEvents(GameEventStatus eventStatus) throws SQLException {
         try (var connection = getConnector().getConnection();
              var ps = connection.prepareStatement(
-                     "SELECT * FROM " + getTablename() + " WHERE end_date > NOW()"
+                     "SELECT * FROM " + getTablename() + " WHERE event_status = ?"
              )) {
+            ps.setString(1, eventStatus.name());
             try (ResultSet resultSet = ps.executeQuery()) {
                 var events = new ArrayList<GameEvent>();
                 while (resultSet.next())
@@ -120,6 +100,7 @@ public class EventsTable extends DatabaseTable {
         var eventName = gameEvent.getEventName();
         var eventDescription = gameEvent.getEventDescription();
         var eventOwner = gameEvent.getEventOwner();
+        var eventStatus = gameEvent.getEventStatus();
         var eventStartTime = gameEvent.getEventStartTime();
         var eventEndTime = gameEvent.getEventEndTime();
 
@@ -136,18 +117,33 @@ public class EventsTable extends DatabaseTable {
         try (Connection connection = getConnector().getConnection();
              PreparedStatement ps = connection.prepareStatement(
                      "INSERT INTO " + getTablename() +
-                             " (id, event_name, description, owner_id, start_date, end_date, location, entrant, event_options) " +
-                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                             " (id, event_name, description, owner_id, event_status, start_date, end_date, location, entrant, event_options) " +
+                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
              )) {
             ps.setString(1, eventId.toString());
             ps.setString(2, eventName);
             ps.setString(3, eventDescription);
             ps.setString(4, eventOwner.toString());
-            ps.setDate(5, new Date(eventStartTime));
-            ps.setDate(6, new Date(eventEndTime));
-            ps.setString(7, locationJson);
-            ps.setString(8, entrantJson);
-            ps.setString(9, eventOptionsJson);
+            ps.setString(5, eventStatus.name());
+            ps.setDate(6, new Date(eventStartTime));
+            ps.setDate(7, new Date(eventEndTime));
+            ps.setString(8, locationJson);
+            ps.setString(9, entrantJson);
+            ps.setString(10, eventOptionsJson);
+
+            ps.execute();
+        }
+    }
+
+    public void updateEventStatus(GameEvent gameEvent) throws SQLException {
+        var eventId = gameEvent.getEventId();
+        var eventStatus = gameEvent.getEventStatus().name();
+        try (Connection connection = getConnector().getConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     "UPDATE " + getTablename() + " SET event_status = ? WHERE id= ?"
+             )) {
+            ps.setString(1, eventStatus);
+            ps.setString(2, eventId.toString());
 
             ps.execute();
         }
@@ -168,6 +164,7 @@ public class EventsTable extends DatabaseTable {
         var eventName = resultSet.getString("event_name");
         var eventDescription = resultSet.getString("description");
         var eventOwner = UUID.fromString(resultSet.getString("owner_id"));
+        var eventStatus = GameEventStatus.valueOf(resultSet.getString("event_status"));
         var eventStartTime = resultSet.getDate("start_date").getTime();
         var eventEndTime = resultSet.getDate("end_date").getTime();
 
@@ -182,7 +179,7 @@ public class EventsTable extends DatabaseTable {
             eventLocation = MAPPER.readValue(locationJson, Location.class);
         if (!StringUtils.isEmpty(entrantJson))
             entrant = MAPPER.readValue(entrantJson, new TypeReference<List<String>>() {
-            }).stream()
+                    }).stream()
                     .map(UUID::fromString)
                     .collect(Collectors.toList());
         if (!StringUtils.isEmpty(eventOptionsJson))
@@ -192,6 +189,7 @@ public class EventsTable extends DatabaseTable {
                 eventName,
                 eventDescription,
                 eventOwner,
+                eventStatus,
                 eventStartTime,
                 eventEndTime,
                 eventLocation,

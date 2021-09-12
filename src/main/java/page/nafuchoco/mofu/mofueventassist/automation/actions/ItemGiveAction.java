@@ -34,8 +34,8 @@ public class ItemGiveAction extends AutomationAction {
     @Override
     public void execute() {
         ItemGiveActionOptions options = (ItemGiveActionOptions) getOptions();
-        ItemStack itemStack = new ItemStack(Material.getMaterial(options.getMaterialName()));
-        itemStack.setAmount(NumberUtils.toInt(options.getAmount(), 1));
+        ItemStack itemStack = new ItemStack(Material.getMaterial(options.materialName()));
+        itemStack.setAmount(NumberUtils.toInt(options.amount(), 1));
         getEvent().getEntrant().stream()
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)

@@ -33,6 +33,8 @@ public interface GameEvent {
 
     UUID getEventOwner();
 
+    GameEventStatus getEventStatus();
+
     long getEventStartTime();
 
     long getEventEndTime();

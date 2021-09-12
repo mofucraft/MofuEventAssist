@@ -19,44 +19,35 @@ package page.nafuchoco.mofu.mofueventassist;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import page.nafuchoco.mofu.mofueventassist.database.EventsTable;
 import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
+import page.nafuchoco.mofu.mofueventassist.element.GameEventStatus;
 
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
-public class GameEventManager {
+public class GameEventRegistry {
     private final EventsTable eventsTable;
-    private final List<GameEvent> upcomingEvents;
-    private final List<GameEvent> currentEvents;
 
-    public GameEventManager(EventsTable eventsTable) throws SQLException {
+    private final Map<GameEventStatus, List<GameEvent>> eventStore;
+
+    public GameEventRegistry(EventsTable eventsTable) throws SQLException {
         this.eventsTable = eventsTable;
-        upcomingEvents = eventsTable.getUpcomingEvents();
-        currentEvents = eventsTable.getCurrentEvents();
+        eventStore = new HashMap<>();
+        eventStore.put(GameEventStatus.UPCOMING, eventsTable.getUpcomingEvents());
+        eventStore.put(GameEventStatus.HOLDING, eventsTable.getHoldingEvents());
     }
 
-    public List<GameEvent> getUpcomingEvents() {
-        return upcomingEvents;
-    }
-
-    public List<GameEvent> getCurrentEvents() {
-        return currentEvents;
-    }
-
-    public void startEvent(GameEvent event) {
-        if (event.getEventOptions().isEnableStartAnnounce())
-            event.getEventOptions().getStartAutomation();
-    }
-
-    public void endEvent(GameEvent event) {
-        if (event.getEventOptions().isEnableStartAnnounce())
-            event.getEventOptions().getEndAutomations();
+    public List<GameEvent> getEvents(GameEventStatus eventStatus) {
+        return Collections.unmodifiableList(eventStore.get(eventStatus));
     }
 
     public void registerEvent(GameEvent event) {
         try {
             eventsTable.registerEvent(event);
-            upcomingEvents.add(event);
+            eventStore.get(GameEventStatus.UPCOMING).add(event);
         } catch (JsonProcessingException | SQLException e) {
             MofuEventAssist.getInstance().getLogger().log(
                     Level.WARNING,
@@ -69,6 +60,7 @@ public class GameEventManager {
     public void deleteEvent(GameEvent event) {
         try {
             eventsTable.deleteEvent(event.getEventId());
+            eventStore.get(event.getEventStatus()).remove(event);
         } catch (SQLException e) {
             MofuEventAssist.getInstance().getLogger().log(
                     Level.WARNING,
@@ -76,5 +68,10 @@ public class GameEventManager {
                     e
             );
         }
+    }
+
+    protected void changeEventStatus(GameEvent gameEvent, GameEventStatus oldStatus, GameEventStatus newStatus) {
+        eventStore.get(oldStatus).remove(gameEvent);
+        eventStore.get(newStatus).add(gameEvent);
     }
 }

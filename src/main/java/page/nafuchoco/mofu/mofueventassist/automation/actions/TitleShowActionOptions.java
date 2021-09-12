@@ -16,29 +16,8 @@
 
 package page.nafuchoco.mofu.mofueventassist.automation.actions;
 
-import lombok.AllArgsConstructor;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
 
-@AllArgsConstructor
-public class TitleShowActionOptions implements ActionOptions {
-    private final String title;
-    private final String subTitle;
-    private final String titleColorName;
-    private final String subTitleColorName;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getSubTitle() {
-        return subTitle;
-    }
-
-    public String getTitleColorName() {
-        return titleColorName;
-    }
-
-    public String getSubTitleColorName() {
-        return subTitleColorName;
-    }
+public record TitleShowActionOptions(String title, String subTitle, String titleColorName,
+                                     String subTitleColorName) implements ActionOptions {
 }

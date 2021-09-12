@@ -14,26 +14,33 @@
  * limitations under the License.
  */
 
-package page.nafuchoco.mofu.mofueventassist.automation.actions;
+package page.nafuchoco.mofu.mofueventassist.event;
 
-import org.bukkit.Bukkit;
-import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
 
-import java.util.Objects;
+public abstract class GameEventEvent extends Event {
+    private static final HandlerList handlers = new HandlerList();
 
-public class MessageSendAction extends AutomationAction {
+    private final GameEvent gameEvent;
 
-    public MessageSendAction(GameEvent gameEvent, ActionOptions actionOptions) {
-        super(gameEvent, actionOptions);
+    public GameEventEvent(GameEvent gameEvent) {
+        this.gameEvent = gameEvent;
+    }
+
+    public GameEvent getGameEvent() {
+        return gameEvent;
+    }
+
+    
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     @Override
-    public void execute() {
-        MessageSendActionOptions options = (MessageSendActionOptions) getOptions();
-        getEvent().getEntrant().stream()
-                .map(Bukkit::getPlayer)
-                .filter(Objects::nonNull)
-                .forEach(p -> p.sendMessage(options.message()));
+    public @NotNull HandlerList getHandlers() {
+        return handlers;
     }
 }
