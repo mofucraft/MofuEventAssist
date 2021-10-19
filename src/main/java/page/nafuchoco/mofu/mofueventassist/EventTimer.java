@@ -24,7 +24,11 @@ import page.nafuchoco.mofu.mofueventassist.event.GameEventStartEvent;
 import java.util.Date;
 
 public class EventTimer implements Runnable {
-    private static final GameEventRegistry eventRegistry = MofuEventAssist.getInstance().getEventRegistry();
+    private final GameEventRegistry eventRegistry;
+
+    public EventTimer(GameEventRegistry eventRegistry) {
+        this.eventRegistry = eventRegistry;
+    }
 
     @Override
     public void run() {

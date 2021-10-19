@@ -17,6 +17,7 @@
 package page.nafuchoco.mofu.mofueventassist.automation.actions;
 
 import org.bukkit.Bukkit;
+import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
 import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
 
@@ -34,6 +35,6 @@ public class MessageSendAction extends AutomationAction {
         getEvent().getEntrant().stream()
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
-                .forEach(p -> p.sendMessage(options.message()));
+                .forEach(p -> Bukkit.getServer().getScheduler().runTask(MofuEventAssist.getInstance(), () -> p.sendMessage(options.message())));
     }
 }

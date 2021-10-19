@@ -20,6 +20,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
 import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
 
@@ -39,6 +40,6 @@ public class ItemGiveAction extends AutomationAction {
         getEvent().getEntrant().stream()
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
-                .forEach(p -> p.getInventory().addItem(itemStack));
+                .forEach(p -> Bukkit.getServer().getScheduler().runTask(MofuEventAssist.getInstance(), () -> p.getInventory().addItem(itemStack)));
     }
 }

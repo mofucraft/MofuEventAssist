@@ -21,6 +21,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
+import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
 import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
 
@@ -42,6 +43,8 @@ public class TitleShowAction extends AutomationAction {
         getEvent().getEntrant().stream()
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
-                .forEach(p -> p.showTitle(Title.title(titleComponent, subTitleComponent, Title.DEFAULT_TIMES)));
+                .forEach(p -> Bukkit.getServer().getScheduler().runTask(MofuEventAssist.getInstance(), () -> {
+                    p.showTitle(Title.title(titleComponent, subTitleComponent, Title.DEFAULT_TIMES));
+                }));
     }
 }

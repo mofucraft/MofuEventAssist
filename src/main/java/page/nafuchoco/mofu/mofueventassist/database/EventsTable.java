@@ -149,6 +149,23 @@ public class EventsTable extends DatabaseTable {
         }
     }
 
+    public void updateEntrantPlayer(GameEvent gameEvent) throws JsonProcessingException, SQLException {
+        var eventId = gameEvent.getEventId();
+        String entrantJson = null;
+        if (gameEvent.getEntrant() != null)
+            entrantJson = MAPPER.writeValueAsString(gameEvent.getEntrant());
+
+        try (Connection connection = getConnector().getConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     "UPDATE " + getTablename() + " SET entrant = ? WHERE id= ?"
+             )) {
+            ps.setString(1, entrantJson);
+            ps.setString(2, eventId.toString());
+
+            ps.execute();
+        }
+    }
+
     public void deleteEvent(UUID eventId) throws SQLException {
         try (Connection connection = getConnector().getConnection();
              PreparedStatement ps = connection.prepareStatement(

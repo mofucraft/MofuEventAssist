@@ -22,6 +22,10 @@ import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface EventAutomationAction {
 
+    /**
+     * 設計上メインスレッドとは別スレッド上で動作するため、同期処理はそのままでは実行することができません。
+     * それらの処理を実行する場合は{@link org.bukkit.scheduler.BukkitScheduler#runTask}を使用してください。
+     */
     void execute();
 
     GameEvent getEvent();

@@ -17,7 +17,11 @@
 package page.nafuchoco.mofu.mofueventassist;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import page.nafuchoco.mofu.mofueventassist.database.EventsTable;
+import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
 import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
 import page.nafuchoco.mofu.mofueventassist.element.GameEventStatus;
 
@@ -32,22 +36,24 @@ public class GameEventRegistry {
     private final EventsTable eventsTable;
 
     private final Map<GameEventStatus, List<GameEvent>> eventStore;
+    private final Map<Player, EventEditor> editorStore;
 
     public GameEventRegistry(EventsTable eventsTable) throws SQLException {
         this.eventsTable = eventsTable;
         eventStore = new HashMap<>();
+        editorStore = new HashMap<>();
         eventStore.put(GameEventStatus.UPCOMING, eventsTable.getUpcomingEvents());
         eventStore.put(GameEventStatus.HOLDING, eventsTable.getHoldingEvents());
     }
 
-    public List<GameEvent> getEvents(GameEventStatus eventStatus) {
+    public List<GameEvent> getEvents(@NotNull GameEventStatus eventStatus) {
         return Collections.unmodifiableList(eventStore.get(eventStatus));
     }
 
-    public void registerEvent(GameEvent event) {
+    public void registerEvent(@NotNull GameEvent event) {
         try {
             eventsTable.registerEvent(event);
-            eventStore.get(GameEventStatus.UPCOMING).add(event);
+            eventStore.get(event.getEventStatus()).add(event);
         } catch (JsonProcessingException | SQLException e) {
             MofuEventAssist.getInstance().getLogger().log(
                     Level.WARNING,
@@ -57,7 +63,7 @@ public class GameEventRegistry {
         }
     }
 
-    public void deleteEvent(GameEvent event) {
+    public void deleteEvent(@NotNull GameEvent event) {
         try {
             eventsTable.deleteEvent(event.getEventId());
             eventStore.get(event.getEventStatus()).remove(event);
@@ -73,5 +79,17 @@ public class GameEventRegistry {
     protected void changeEventStatus(GameEvent gameEvent, GameEventStatus oldStatus, GameEventStatus newStatus) {
         eventStore.get(oldStatus).remove(gameEvent);
         eventStore.get(newStatus).add(gameEvent);
+    }
+
+    public void registerEditor(Player player, @NotNull EventEditor editor) {
+        editorStore.put(player, editor);
+    }
+
+    public @Nullable EventEditor getEventBuilder(Player player) {
+        return editorStore.get(player);
+    }
+
+    protected void clearEditor(Player player) {
+        editorStore.remove(player);
     }
 }

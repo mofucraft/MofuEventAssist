@@ -17,7 +17,10 @@
 package page.nafuchoco.mofu.mofueventassist.element;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import page.nafuchoco.mofu.mofueventassist.event.GameEventPlayerEntryEvent;
 
 import java.util.List;
 import java.util.UUID;
@@ -44,4 +47,8 @@ public interface GameEvent {
     List<UUID> getEntrant();
 
     EventOptions getEventOptions();
+
+    default void entryEvent(Player player) {
+        Bukkit.getServer().getPluginManager().callEvent(new GameEventPlayerEntryEvent(this, player));
+    }
 }

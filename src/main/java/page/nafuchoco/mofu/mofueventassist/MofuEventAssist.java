@@ -16,20 +16,24 @@
 
 package page.nafuchoco.mofu.mofueventassist;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import page.nafuchoco.mofu.mofueventassist.automation.EventAutomationAction;
 import page.nafuchoco.mofu.mofueventassist.command.CreateCommand;
 import page.nafuchoco.mofu.mofueventassist.command.HelpCommand;
 import page.nafuchoco.mofu.mofueventassist.command.SubCommandExecutor;
 import page.nafuchoco.mofu.mofueventassist.database.DatabaseConnector;
 import page.nafuchoco.mofu.mofueventassist.database.EventsTable;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventEndEvent;
+import page.nafuchoco.mofu.mofueventassist.event.GameEventPlayerEntryEvent;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventStartEvent;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventStatusUpdateEvent;
 
@@ -78,13 +82,13 @@ public final class MofuEventAssist extends JavaPlugin {
             // Load events
             eventRegistry = new GameEventRegistry(eventsTable);
         } catch (SQLException e) {
-            getInstance().getLogger().log(Level.WARNING, "An error occurred while initializing the database table.", e);
+            getLogger().log(Level.WARNING, "An error occurred while initializing the database table.", e);
             setEnabled(false);
             return;
         }
 
         // イベント開始・終了の定期確認
-        Bukkit.getServer().getScheduler().runTaskTimer(this, new EventTimer(), 0L, 20L);
+        Bukkit.getServer().getScheduler().runTaskTimer(this, new EventTimer(getEventRegistry()), 0L, 20L);
     }
 
     @Override
@@ -135,7 +139,7 @@ public final class MofuEventAssist extends JavaPlugin {
             eventsTable.updateEventStatus(event.getGameEvent());
             getEventRegistry().changeEventStatus(event.getGameEvent(), event.getOldStatus(), event.getNewStatus());
         } catch (SQLException e) {
-            MofuEventAssist.getInstance().getLogger().log(
+            getLogger().log(
                     Level.WARNING,
                     "An error has occurred while updating event information.",
                     e
@@ -145,12 +149,35 @@ public final class MofuEventAssist extends JavaPlugin {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onGameEventStartEvent(GameEventStartEvent event) {
-        event.getGameEvent().getEventOptions().getStartAutomation().getActions().forEach(action -> action.execute());
+        Bukkit.getServer().getScheduler().runTaskAsynchronously(this, () -> {
+            event.getGameEvent().getEventOptions().getStartAutomation().getActions().forEach(EventAutomationAction::execute);
+        });
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onGameEventEndEvent(GameEventEndEvent event) {
-        event.getGameEvent().getEventOptions().getEndAutomation().getActions().forEach(action -> action.execute());
+        Bukkit.getServer().getScheduler().runTaskAsynchronously(this, () -> {
+            event.getGameEvent().getEventOptions().getEndAutomation().getActions().forEach(EventAutomationAction::execute);
+        });
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onGameEventPlayerEntryEvent(GameEventPlayerEntryEvent event) {
+        event.getGameEvent().getEntrant().add(event.getPlayer().getUniqueId());
+        try {
+            eventsTable.updateEntrantPlayer(event.getGameEvent());
+        } catch (JsonProcessingException | SQLException e) {
+            getLogger().log(
+                    Level.WARNING,
+                    "An error has occurred while updating event information.",
+                    e
+            );
+        }
+    }
+
+    @EventHandler
+    public void onPlayerQuitEvent(PlayerQuitEvent event) {
+        getEventRegistry().clearEditor(event.getPlayer());
     }
 
 
