@@ -33,15 +33,32 @@ public class EditorClickEventListener implements Listener {
             if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) // ほかインベントリの移動は問答無用でキャンセルする
                 event.setCancelled(true);
 
-            var editor = (EditorInventoryHolder) holder;
-            try {
-                editor.getEventEditorAction().execute(event);
-            } catch (Exception e) {
-                MofuEventAssist.getInstance().getLogger().log(
-                        Level.WARNING,
-                        "An error occurred while executing the editor action.",
-                        e
-                );
+            EditorInventoryHolder editorHolder = (EditorInventoryHolder) holder;
+            var waitingAction = editorHolder.getEditor().getWaitingAction();
+            if (waitingAction != null) { // 操作待ちの場合は該当アクションを実行する
+                try {
+                    waitingAction.execute(event);
+                } catch (Exception e) {
+                    MofuEventAssist.getInstance().getLogger().log(
+                            Level.WARNING,
+                            "An error occurred while executing the editor action.",
+                            e
+                    );
+                }
+            } else {
+                var itemStack = event.getCurrentItem();
+                if (itemStack instanceof EditorItemStack) {
+                    EditorItemStack editorItemStack = (EditorItemStack) itemStack;
+                    try {
+                        editorItemStack.geEditorAction().execute(event);
+                    } catch (Exception e) {
+                        MofuEventAssist.getInstance().getLogger().log(
+                                Level.WARNING,
+                                "An error occurred while executing the editor action.",
+                                e
+                        );
+                    }
+                }
             }
         }
     }

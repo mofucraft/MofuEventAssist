@@ -1,0 +1,91 @@
+/*
+ * Copyright 2021 NAFU_at
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package page.nafuchoco.mofu.mofueventassist.editor.actions;
+
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
+import page.nafuchoco.mofu.mofueventassist.editor.BaseEventEditorAction;
+import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
+import page.nafuchoco.mofu.mofueventassist.utils.CalendarInventoryGenerator;
+
+import java.util.Calendar;
+
+public class SetStartDateAction extends BaseEventEditorAction {
+
+    public SetStartDateAction(EventEditor editor) {
+        super(editor);
+    }
+
+    private int year = -1;
+    private int month = -1;
+    private int date = -1;
+    private int hour = -1;
+    private int pm = -1;
+    private int minutes = -1;
+
+    @Override
+    public void execute(InventoryClickEvent event) {
+        if (getEditor().getWaitingAction() == this) {
+            var holder = event.getInventory().getHolder();
+            var value =
+                    switch (event.getCurrentItem().getItemMeta().getDisplayName()) {
+                        case "AM" -> 0;
+
+                        case "PM" -> 1;
+
+                        default -> Integer.parseInt(event.getCurrentItem().getItemMeta().getDisplayName());
+                    };
+
+            Inventory nextInventory = null;
+            if (year == -1) {
+                year = value;
+                nextInventory = CalendarInventoryGenerator.getMonthSelector(holder);
+            } else if (month == -1) {
+                month = value;
+                nextInventory = CalendarInventoryGenerator.getDateSelector(holder, year, month);
+            } else if (date == -1) {
+                date = value;
+                nextInventory = CalendarInventoryGenerator.getHourSelector(holder);
+            } else if (hour == -1) {
+                hour = value;
+                nextInventory = CalendarInventoryGenerator.getAMPMSelector(holder);
+            } else if (pm == -1) {
+                pm = value;
+                nextInventory = CalendarInventoryGenerator.getMinutesSelector(holder);
+            } else if (minutes == -1) {
+                minutes = value;
+
+                var calendar = Calendar.getInstance();
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, month - 1);
+                calendar.set(Calendar.DATE, date);
+                calendar.set(Calendar.HOUR, hour);
+                calendar.set(Calendar.AM_PM, pm);
+                calendar.set(Calendar.MINUTE, minutes);
+                getEditor().getBuilder().setEventStartTime(calendar.getTime().getTime());
+
+                nextInventory = holder.getInventory();
+                getEditor().setWaitingAction(null);
+            }
+
+            event.getWhoClicked().openInventory(nextInventory);
+        } else {
+            getEditor().setWaitingAction(this);
+            event.getWhoClicked().openInventory(CalendarInventoryGenerator.getYearSelector(event.getInventory().getHolder()));
+        }
+    }
+}

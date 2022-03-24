@@ -18,7 +18,7 @@ package page.nafuchoco.mofu.mofueventassist.editor;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public interface EventEditorAction {
+interface EventEditorAction {
 
     void execute(InventoryClickEvent event);
 }

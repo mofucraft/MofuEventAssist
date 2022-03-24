@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-package page.nafuchoco.mofu.mofueventassist.editor;
+package page.nafuchoco.mofu.mofueventassist.editor.actions;
 
-import page.nafuchoco.mofu.mofueventassist.element.GameEventBuilder;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import page.nafuchoco.mofu.mofueventassist.editor.BaseEventEditorAction;
+import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
 
-public class EventEditor {
-    private final GameEventBuilder builder;
+public class SetLocationAction extends BaseEventEditorAction {
 
-    private EventEditorAction waitingAction;
-
-    public EventEditor() {
-        builder = new GameEventBuilder();
+    public SetLocationAction(EventEditor editor) {
+        super(editor);
     }
 
-    public GameEventBuilder getBuilder() {
-        return builder;
-    }
-
-    public EventEditorAction getWaitingAction() {
-        return waitingAction;
-    }
-
-    public void setWaitingAction(EventEditorAction waitingAction) {
-        this.waitingAction = waitingAction;
+    @Override
+    public void execute(InventoryClickEvent event) {
+        getEditor().getBuilder().setEventLocation(event.getWhoClicked().getLocation());
     }
 }

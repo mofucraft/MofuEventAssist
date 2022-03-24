@@ -16,26 +16,14 @@
 
 package page.nafuchoco.mofu.mofueventassist.editor;
 
-import page.nafuchoco.mofu.mofueventassist.element.GameEventBuilder;
+public abstract class BaseEventEditorAction implements EventEditorAction {
+    private final EventEditor editor;
 
-public class EventEditor {
-    private final GameEventBuilder builder;
-
-    private EventEditorAction waitingAction;
-
-    public EventEditor() {
-        builder = new GameEventBuilder();
+    public BaseEventEditorAction(EventEditor editor) {
+        this.editor = editor;
     }
 
-    public GameEventBuilder getBuilder() {
-        return builder;
-    }
-
-    public EventEditorAction getWaitingAction() {
-        return waitingAction;
-    }
-
-    public void setWaitingAction(EventEditorAction waitingAction) {
-        this.waitingAction = waitingAction;
+    public EventEditor getEditor() {
+        return editor;
     }
 }

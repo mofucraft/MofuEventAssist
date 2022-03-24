@@ -17,26 +17,54 @@
 package page.nafuchoco.mofu.mofueventassist.editor;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
+import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
 
 public class EditorInventoryHolder implements InventoryHolder {
     private final EventEditor editor;
-    private final EventEditorAction eventEditorAction;
+    private Inventory inventory;
 
     public EditorInventoryHolder(EventEditor editor, EventEditorAction eventEditorAction) {
         this.editor = editor;
-        this.eventEditorAction = eventEditorAction;
     }
 
     @Override
     public @NotNull Inventory getInventory() {
-        var inventory = Bukkit.getServer().createInventory(this, 27);
+        if (inventory == null)
+            inventory = Bukkit.getServer().createInventory(this, 27);
         return inventory;
     }
 
-    public EventEditorAction getEventEditorAction() {
-        return eventEditorAction;
+    public EventEditor getEditor() {
+        return editor;
+    }
+
+    public EditorItemStack getMenuItemStack(Material material, int amount, Class<? extends BaseEventEditorAction> editorActionClass) {
+        try {
+            EventEditorAction editorAction = editorActionClass.getConstructor(EventEditor.class).newInstance(getEditor());
+            return new EditorItemStack(material, amount, editorAction);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            MofuEventAssist.getInstance().getLogger().log(
+                    Level.WARNING,
+                    "Failed to initialize EventEditorAction.\n" +
+                            "Incorrectly formatted class may have been specified.",
+                    e
+            );
+        }
+        return null;
+    }
+
+    public void addMenu(EditorItemStack itemStack, int index) {
+        getInventory().setItem(index, itemStack);
+    }
+
+    public void deleteMenu(int index) {
+        getInventory().setItem(index, null);
     }
 }
