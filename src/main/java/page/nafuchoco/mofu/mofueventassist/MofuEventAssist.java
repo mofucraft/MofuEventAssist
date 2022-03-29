@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -36,6 +37,7 @@ import page.nafuchoco.mofu.mofueventassist.event.GameEventEndEvent;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventPlayerEntryEvent;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventStartEvent;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventStatusUpdateEvent;
+import page.nafuchoco.mofu.mofueventassist.utils.CalendarInventoryGenerator;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -60,15 +62,17 @@ public final class MofuEventAssist extends JavaPlugin {
     }
 
     public EventAssistConfig getEventAssistConfig() {
-        if (config != null)
-            configLoader.getConfig();
+        if (config == null)
+            config = configLoader.getConfig();
         return config;
     }
 
     @Override
     public void onEnable() {
         // Plugin startup logic
+        saveDefaultConfig();
         configLoader = new ConfigLoader();
+        configLoader.reloadConfig();
 
         // SQL Initialization
         connector = new DatabaseConnector(getEventAssistConfig().getDatabaseType(),
@@ -102,20 +106,60 @@ public final class MofuEventAssist extends JavaPlugin {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        SubCommandExecutor executor = getSubCommand(args);
+        if (command.getLabel().equals("test")) {
+            if (args.length >= 1 && sender instanceof Player player) {
+                switch (args[0]) {
+                    case "minutesCalendar":
+                        player.openInventory(CalendarInventoryGenerator.getMinutesSelector(player));
+                        break;
 
-        if (executor != null)
-            return executor.onCommand(sender, command, label, Arrays.copyOfRange(args, 1, args.length));
-        else
-            return HELP_COMMAND_EXECUTOR.onCommand(sender, command, label, args);
+                    case "hourCalendar":
+                        player.openInventory(CalendarInventoryGenerator.getHourSelector(player));
+                        break;
+
+                    case "dayCalender":
+                        player.openInventory(CalendarInventoryGenerator.getDateSelector(player, 2022, 3));
+                        break;
+
+                    case "monthCalendar":
+                        player.openInventory(CalendarInventoryGenerator.getMonthSelector(player));
+                        break;
+
+                    case "yearCalender":
+                        player.openInventory(CalendarInventoryGenerator.getYearSelector(player));
+                        break;
+
+                    case "AMPMCalendar":
+                        player.openInventory(CalendarInventoryGenerator.getAMPMSelector(player));
+                        break;
+
+                    default:
+                        break;
+                }
+                return true;
+            }
+        } else {
+            SubCommandExecutor executor = getSubCommand(args);
+
+            if (executor != null)
+                return executor.onCommand(sender, command, label, Arrays.copyOfRange(args, 1, args.length));
+            else
+                return HELP_COMMAND_EXECUTOR.onCommand(sender, command, label, args);
+        }
+
+        return false;
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        SubCommandExecutor executor = getSubCommand(args);
+        if (command.getLabel().equals("test")) {
 
-        if (executor != null)
-            return executor.onTabComplete(sender, command, alias, Arrays.copyOfRange(args, 1, args.length));
+
+        } else {
+            SubCommandExecutor executor = getSubCommand(args);
+            if (executor != null)
+                return executor.onTabComplete(sender, command, alias, Arrays.copyOfRange(args, 1, args.length));
+        }
         return null;
     }
 

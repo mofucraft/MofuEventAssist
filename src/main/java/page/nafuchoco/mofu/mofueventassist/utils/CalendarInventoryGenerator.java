@@ -16,13 +16,17 @@
 
 package page.nafuchoco.mofu.mofueventassist.utils;
 
+import lombok.val;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
 
 import java.util.Calendar;
+import java.util.logging.Level;
 
 public class CalendarInventoryGenerator {
 
@@ -36,7 +40,7 @@ public class CalendarInventoryGenerator {
 
         for (int i = 0; i < 9; i++) {
             var itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
-            itemStack.getItemMeta().setDisplayName(Integer.toString(year));
+            itemStack.getItemMeta().displayName(Component.text().content(String.valueOf(year)).asComponent());
             inventory.setItem(i, itemStack);
             year++;
         }
@@ -51,10 +55,10 @@ public class CalendarInventoryGenerator {
         // - - -  7  8  9 - - -
         // - - - 10 11 12 - - -
         // 3 - 4 - 5 - 12 - 13 - 14 - 21 - 22 - 23 - 30 - 31 - 32
-        int line = 1;
-        int index = 3;
+        int line = 0;
+        int index = 2;
         for (int month = 1; month <= 12; month++) {
-            if (index == 9 * (line - 1) + 5) {
+            if (index == 9 * line + 5) {
                 index = index + 7;
                 line++;
             } else {
@@ -62,7 +66,9 @@ public class CalendarInventoryGenerator {
             }
 
             var itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, month);
-            itemStack.getItemMeta().setDisplayName(Integer.toString(month));
+            val meta = itemStack.getItemMeta();
+            meta.displayName(Component.text().content(String.valueOf(month)).asComponent());
+            itemStack.setItemMeta(meta);
             inventory.setItem(index, itemStack);
         }
 
@@ -81,18 +87,27 @@ public class CalendarInventoryGenerator {
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month);
 
-        int line = 1;
-        int index = 1;
-        for (int date = 1; date <= calendar.getActualMaximum(Calendar.DATE); date++) {
-            if (index == 7 * line + 2 * (line - 1)) {
-                index = index + 3;
-            } else {
+        int line = 0;
+        int index = 0;
+        int date = 1;
+        while (date <= calendar.getActualMaximum(Calendar.DATE)) {
+            if (index == line * 9 || index == (line + 1) * 9 - 1)
                 index++;
+
+            MofuEventAssist.getInstance().getLogger().log(Level.INFO, "Index " + index + " Line " + line + " Date" + date);
+            if (Math.floorMod(index, 9) == 0) {
+                line++;
+                continue;
             }
 
             var itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, date);
-            itemStack.getItemMeta().setDisplayName(Integer.toString(date));
+            val meta = itemStack.getItemMeta();
+            meta.displayName(Component.text().content(String.valueOf(date)).asComponent());
+            itemStack.setItemMeta(meta);
             inventory.setItem(index, itemStack);
+
+            date++;
+            index++;
         }
 
         return inventory;
@@ -104,10 +119,10 @@ public class CalendarInventoryGenerator {
         // - - -  4  5  6 - - -
         // - - -  7  8  9 - - -
         // - - - 10 11 12 - - -
-        int line = 1;
-        int index = 3;
+        int line = 0;
+        int index = 2;
         for (int hour = 1; hour <= 12; hour++) {
-            if (index == 9 * (line - 1) + 5) {
+            if (index == 9 * line + 5) {
                 index = index + 7;
                 line++;
             } else {
@@ -115,7 +130,9 @@ public class CalendarInventoryGenerator {
             }
 
             var itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, hour);
-            itemStack.getItemMeta().setDisplayName(Integer.toString(hour));
+            val meta = itemStack.getItemMeta();
+            meta.displayName(Component.text().content(String.valueOf(hour)).asComponent());
+            itemStack.setItemMeta(meta);
             inventory.setItem(index, itemStack);
         }
 
@@ -125,10 +142,14 @@ public class CalendarInventoryGenerator {
     public static Inventory getAMPMSelector(InventoryHolder holder) {
         var inventory = Bukkit.createInventory(holder, 9, "AM/PM Selector");
         var itemStackA = new ItemStack(Material.RED_STAINED_GLASS_PANE);
-        itemStackA.getItemMeta().setDisplayName("AM");
+        val metaA = itemStackA.getItemMeta();
+        metaA.displayName(Component.text().content("AM").asComponent());
+        itemStackA.setItemMeta(metaA);
         inventory.setItem(3, itemStackA);
         var itemStackP = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
-        itemStackP.getItemMeta().setDisplayName("PM");
+        val metaP = itemStackP.getItemMeta();
+        metaP.displayName(Component.text().content("PM").asComponent());
+        itemStackP.setItemMeta(metaP);
         inventory.setItem(5, itemStackP);
 
         return inventory;
@@ -139,7 +160,9 @@ public class CalendarInventoryGenerator {
         for (int minutes = 0; minutes <= 4; minutes++) {
 
             var itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, minutes == 0 ? 0 : minutes * 15);
-            itemStack.getItemMeta().setDisplayName(Integer.toString(minutes));
+            val meta = itemStack.getItemMeta();
+            meta.displayName(Component.text().content(String.valueOf(minutes)).asComponent());
+            itemStack.setItemMeta(meta);
             inventory.setItem(minutes, itemStack);
         }
 

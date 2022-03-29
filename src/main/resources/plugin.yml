@@ -1,7 +1,14 @@
 name: MofuEventAssist
-version: @version@
+version: ${version}
 main: page.nafuchoco.mofu.mofueventassist.MofuEventAssist
 api-version: 1.16
 prefix: EventAssist
 authors: [ NAFU_at ]
 website: https://github.com/mofucraft
+
+commands:
+  eventassist:
+    description: MofuEventAssist
+
+  test:
+    description: Test
