@@ -21,6 +21,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
+import page.nafuchoco.mofu.mofueventassist.editor.actions.BaseEventEditorAction;
 
 import java.util.logging.Level;
 
@@ -29,15 +30,16 @@ public class EditorClickEventListener implements Listener {
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent event) {
         var holder = event.getClickedInventory().getHolder();
-        if (holder instanceof EditorInventoryHolder) {
+        if (holder instanceof EditorMenuHolder editorHolder) {
             if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) // ほかインベントリの移動は問答無用でキャンセルする
                 event.setCancelled(true);
 
-            EditorInventoryHolder editorHolder = (EditorInventoryHolder) holder;
+            event.getInventory().close();
+
             var waitingAction = editorHolder.getEditor().getWaitingAction();
-            if (waitingAction != null) { // 操作待ちの場合は該当アクションを実行する
+            if (waitingAction != null && waitingAction instanceof BaseEventEditorAction action) { // 操作待ちの場合は該当アクションを実行する
                 try {
-                    waitingAction.execute(event);
+                    action.execute(event);
                 } catch (Exception e) {
                     MofuEventAssist.getInstance().getLogger().log(
                             Level.WARNING,
@@ -46,20 +48,20 @@ public class EditorClickEventListener implements Listener {
                     );
                 }
             } else {
-                var itemStack = event.getCurrentItem();
-                if (itemStack instanceof EditorItemStack) {
-                    EditorItemStack editorItemStack = (EditorItemStack) itemStack;
-                    try {
-                        editorItemStack.geEditorAction().execute(event);
-                    } catch (Exception e) {
-                        MofuEventAssist.getInstance().getLogger().log(
-                                Level.WARNING,
-                                "An error occurred while executing the editor action.",
-                                e
-                        );
-                    }
+                var editorAction = editorHolder.getAction(event.getSlot());
+
+                try {
+                    editorAction.execute(event);
+                } catch (Exception e) {
+                    MofuEventAssist.getInstance().getLogger().log(
+                            Level.WARNING,
+                            "An error occurred while executing the editor action.",
+                            e
+                    );
                 }
             }
+
+            MofuEventAssist.getInstance().getLogger().log(Level.INFO, "[Debug] " + editorHolder.getEditor().getBuilder().toString());
         }
     }
 }

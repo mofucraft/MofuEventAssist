@@ -16,12 +16,13 @@
 
 package page.nafuchoco.mofu.mofueventassist.editor;
 
+import page.nafuchoco.mofu.mofueventassist.editor.actions.EditorAction;
 import page.nafuchoco.mofu.mofueventassist.element.GameEventBuilder;
 
 public class EventEditor {
     private final GameEventBuilder builder;
 
-    private EventEditorAction waitingAction;
+    private EditorAction waitingAction;
 
     public EventEditor() {
         builder = new GameEventBuilder();
@@ -31,11 +32,11 @@ public class EventEditor {
         return builder;
     }
 
-    public EventEditorAction getWaitingAction() {
+    public EditorAction getWaitingAction() {
         return waitingAction;
     }
 
-    public void setWaitingAction(EventEditorAction waitingAction) {
+    public void setWaitingAction(EditorAction waitingAction) {
         this.waitingAction = waitingAction;
     }
 }

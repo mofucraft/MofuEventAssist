@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 NAFU_at
+ * Copyright 2022 NAFU_at
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package page.nafuchoco.mofu.mofueventassist.editor.actions;
+package page.nafuchoco.mofu.mofueventassist.editor.actions.select;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-import page.nafuchoco.mofu.mofueventassist.editor.BaseEventEditorAction;
 import page.nafuchoco.mofu.mofueventassist.editor.EditorMenuHolder;
 import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
+import page.nafuchoco.mofu.mofueventassist.editor.actions.BaseEventEditorAction;
 import page.nafuchoco.mofu.mofueventassist.utils.CalendarInventoryGenerator;
+import page.nafuchoco.mofu.mofueventassist.utils.EditorMenuGenerator;
 
 import java.util.Calendar;
 
-public class SetEndDateAction extends BaseEventEditorAction {
+public class SetStartDateAction extends BaseEventEditorAction {
 
-    public SetEndDateAction(EventEditor editor) {
+    public SetStartDateAction(EventEditor editor) {
         super(editor);
     }
 
@@ -77,9 +78,10 @@ public class SetEndDateAction extends BaseEventEditorAction {
                     calendar.set(Calendar.HOUR, hour);
                     calendar.set(Calendar.AM_PM, pm);
                     calendar.set(Calendar.MINUTE, minutes);
-                    getEditor().getBuilder().setEventEndTime(calendar.getTime().getTime());
+                    getEditor().getBuilder().setEventStartTime(calendar.getTime().getTime());
 
                     getEditor().setWaitingAction(null);
+                    nextInventory = EditorMenuGenerator.getMainMenu(new EditorMenuHolder(holder.getEditor()));
                 }
 
                 if (nextInventory != null)

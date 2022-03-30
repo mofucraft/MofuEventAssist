@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 NAFU_at
+ * Copyright 2022 NAFU_at
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,16 @@
 
 package page.nafuchoco.mofu.mofueventassist.editor.actions;
 
-import org.bukkit.event.inventory.InventoryClickEvent;
-import page.nafuchoco.mofu.mofueventassist.editor.BaseEventEditorAction;
 import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
 
-public class SetLocationAction extends BaseEventEditorAction {
+public abstract class BaseEventEditorAction implements EventEditorAction {
+    private final EventEditor editor;
 
-    public SetLocationAction(EventEditor editor) {
-        super(editor);
+    public BaseEventEditorAction(EventEditor editor) {
+        this.editor = editor;
     }
 
-    @Override
-    public void execute(InventoryClickEvent event) {
-        getEditor().getBuilder().setEventLocation(event.getWhoClicked().getLocation());
+    public EventEditor getEditor() {
+        return editor;
     }
 }

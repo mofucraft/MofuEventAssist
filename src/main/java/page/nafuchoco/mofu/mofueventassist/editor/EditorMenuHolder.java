@@ -17,30 +17,54 @@
 package page.nafuchoco.mofu.mofueventassist.editor;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
+import page.nafuchoco.mofu.mofueventassist.editor.actions.BaseEventEditorAction;
+import page.nafuchoco.mofu.mofueventassist.editor.actions.EventEditorAction;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
-public class EditorInventoryHolder implements InventoryHolder {
+public class EditorMenuHolder implements InventoryHolder {
     private final EventEditor editor;
-    private final EventEditorAction editorAction;
+    private String editorName = "Event Editor Menu";
     private int size = 27;
     private Inventory inventory;
 
-    public EditorInventoryHolder(EventEditor editor, EventEditorAction eventEditorAction, EventEditorAction editorAction) {
+
+    public EditorMenuHolder(EventEditor editor) {
         this.editor = editor;
-        this.editorAction = editorAction;
+    }
+
+    public EditorMenuHolder(EventEditor editor, String editorName) {
+        this.editor = editor;
+        this.editorName = editorName;
+    }
+
+    public EditorMenuHolder(EventEditor editor, String editorName, int size) {
+        this.editor = editor;
+        this.editorName = editorName;
+        this.size = size;
+    }
+
+
+    public void setEditorName(String editorName) {
+        this.editorName = editorName;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 
     @Override
     public @NotNull Inventory getInventory() {
         if (inventory == null)
-            inventory = Bukkit.getServer().createInventory(this, size);
+            inventory = Bukkit.getServer().createInventory(this, size, editorName);
         return inventory;
     }
 
@@ -48,14 +72,14 @@ public class EditorInventoryHolder implements InventoryHolder {
         return editor;
     }
 
-    public void setMenuSize(int size) {
-        this.size = size;
-    }
 
-    public EditorItemStack getMenuItemStack(Material material, int amount, Class<? extends BaseEventEditorAction> editorActionClass) {
+    private Map<Integer, EventEditorAction> menuActionMap = new HashMap<>();
+
+    public void addMenu(int index, ItemStack itemStack, Class<? extends BaseEventEditorAction> editorActionClass) {
         try {
             EventEditorAction editorAction = editorActionClass.getConstructor(EventEditor.class).newInstance(getEditor());
-            return new EditorItemStack(material, amount, editorAction);
+            getInventory().setItem(index, itemStack);
+            menuActionMap.put(index, editorAction);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             MofuEventAssist.getInstance().getLogger().log(
                     Level.WARNING,
@@ -64,14 +88,14 @@ public class EditorInventoryHolder implements InventoryHolder {
                     e
             );
         }
-        return null;
-    }
-
-    public void addMenu(EditorItemStack itemStack, int index) {
-        getInventory().setItem(index, itemStack);
     }
 
     public void deleteMenu(int index) {
         getInventory().setItem(index, null);
+        menuActionMap.remove(index);
+    }
+
+    public EventEditorAction getAction(int index) {
+        return menuActionMap.get(index);
     }
 }

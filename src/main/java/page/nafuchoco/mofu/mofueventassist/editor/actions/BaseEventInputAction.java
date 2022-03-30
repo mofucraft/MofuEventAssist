@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 NAFU_at
+ * Copyright 2022 NAFU_at
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package page.nafuchoco.mofu.mofueventassist.editor;
+package page.nafuchoco.mofu.mofueventassist.editor.actions;
 
-import org.bukkit.event.inventory.InventoryClickEvent;
+import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
 
-interface EventEditorAction {
+public abstract class BaseEventInputAction implements EventInputAction {
+    private final EventEditor editor;
 
-    void execute(InventoryClickEvent event);
+    public BaseEventInputAction(EventEditor editor) {
+        this.editor = editor;
+    }
+
+    public EventEditor getEditor() {
+        return editor;
+    }
 }

@@ -34,9 +34,10 @@ import page.nafuchoco.mofu.mofueventassist.command.SubCommandExecutor;
 import page.nafuchoco.mofu.mofueventassist.database.DatabaseConnector;
 import page.nafuchoco.mofu.mofueventassist.database.EventsTable;
 import page.nafuchoco.mofu.mofueventassist.editor.EditorClickEventListener;
+import page.nafuchoco.mofu.mofueventassist.editor.EditorInputEventListener;
 import page.nafuchoco.mofu.mofueventassist.editor.EditorMenuHolder;
 import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
-import page.nafuchoco.mofu.mofueventassist.editor.actions.SetStartDateAction;
+import page.nafuchoco.mofu.mofueventassist.editor.actions.select.SetStartDateAction;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventEndEvent;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventPlayerEntryEvent;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventStartEvent;
@@ -57,6 +58,7 @@ public final class MofuEventAssist extends JavaPlugin {
     private EventsTable eventsTable;
 
     private GameEventRegistry eventRegistry;
+    private EditorInputEventListener inputListener;
 
 
     public static MofuEventAssist getInstance() {
@@ -95,7 +97,9 @@ public final class MofuEventAssist extends JavaPlugin {
             return;
         }
 
+        inputListener = new EditorInputEventListener();
         getServer().getPluginManager().registerEvents(new EditorClickEventListener(), this);
+        getServer().getPluginManager().registerEvents(inputListener, this);
 
         // イベント開始・終了の定期確認
         Bukkit.getServer().getScheduler().runTaskTimer(this, new EventTimer(getEventRegistry()), 0L, 20L);
@@ -235,5 +239,9 @@ public final class MofuEventAssist extends JavaPlugin {
 
     public GameEventRegistry getEventRegistry() {
         return eventRegistry;
+    }
+
+    public EditorInputEventListener getInputListener() {
+        return inputListener;
     }
 }

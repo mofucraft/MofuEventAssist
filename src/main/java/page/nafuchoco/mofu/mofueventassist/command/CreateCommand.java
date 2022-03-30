@@ -23,9 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import page.nafuchoco.mofu.mofueventassist.editor.EditorMenuHolder;
 import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
-import page.nafuchoco.mofu.mofueventassist.editor.actions.SetStartDateAction;
 import page.nafuchoco.mofu.mofueventassist.element.GameEventBuilder;
-import page.nafuchoco.mofu.mofueventassist.utils.CalendarInventoryGenerator;
+import page.nafuchoco.mofu.mofueventassist.utils.EditorMenuGenerator;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +42,7 @@ public class CreateCommand implements SubCommandExecutor {
                 EventEditor editor = new EventEditor();
                 EditorMenuHolder holder = new EditorMenuHolder(editor);
                 if (sender instanceof Player player) {
-                    player.openInventory(CalendarInventoryGenerator.getYearSelector(holder, SetStartDateAction.class));
+                    player.openInventory(EditorMenuGenerator.getMainMenu(holder));
                 }
             }
         }
