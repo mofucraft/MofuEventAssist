@@ -28,21 +28,28 @@ import java.util.logging.Level;
 
 public class EditorInventoryHolder implements InventoryHolder {
     private final EventEditor editor;
+    private final EventEditorAction editorAction;
+    private int size = 27;
     private Inventory inventory;
 
-    public EditorInventoryHolder(EventEditor editor, EventEditorAction eventEditorAction) {
+    public EditorInventoryHolder(EventEditor editor, EventEditorAction eventEditorAction, EventEditorAction editorAction) {
         this.editor = editor;
+        this.editorAction = editorAction;
     }
 
     @Override
     public @NotNull Inventory getInventory() {
         if (inventory == null)
-            inventory = Bukkit.getServer().createInventory(this, 27);
+            inventory = Bukkit.getServer().createInventory(this, size);
         return inventory;
     }
 
     public EventEditor getEditor() {
         return editor;
+    }
+
+    public void setMenuSize(int size) {
+        this.size = size;
     }
 
     public EditorItemStack getMenuItemStack(Material material, int amount, Class<? extends BaseEventEditorAction> editorActionClass) {

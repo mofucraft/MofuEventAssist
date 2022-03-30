@@ -18,15 +18,14 @@ package page.nafuchoco.mofu.mofueventassist.utils;
 
 import lombok.val;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
+import page.nafuchoco.mofu.mofueventassist.editor.BaseEventEditorAction;
+import page.nafuchoco.mofu.mofueventassist.editor.EditorMenuHolder;
+import page.nafuchoco.mofu.mofueventassist.editor.actions.SetStartDateAction;
 
 import java.util.Calendar;
-import java.util.logging.Level;
 
 public class CalendarInventoryGenerator {
 
@@ -34,22 +33,30 @@ public class CalendarInventoryGenerator {
         throw new UnsupportedOperationException();
     }
 
-    public static Inventory getYearSelector(InventoryHolder holder) {
-        var inventory = Bukkit.createInventory(holder, 9, "Year Selector");
+    public static Inventory getYearSelector(EditorMenuHolder holder, Class<? extends BaseEventEditorAction> editorActionClass) {
+        holder.setEditorName("Year Selector");
+        holder.setSize(9);
+        var inventory = holder.getInventory();
+
         var year = Calendar.getInstance().get(Calendar.YEAR);
 
         for (int i = 0; i < 9; i++) {
             var itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
-            itemStack.getItemMeta().displayName(Component.text().content(String.valueOf(year)).asComponent());
-            inventory.setItem(i, itemStack);
+            val meta = itemStack.getItemMeta();
+            meta.displayName(Component.text().content(String.valueOf(year)).asComponent());
+            itemStack.setItemMeta(meta);
+            holder.addMenu(i, itemStack, editorActionClass);
             year++;
         }
 
         return inventory;
     }
 
-    public static Inventory getMonthSelector(InventoryHolder holder) {
-        var inventory = Bukkit.createInventory(holder, 36, "Month Selector");
+    public static Inventory getMonthSelector(EditorMenuHolder holder, Class<? extends BaseEventEditorAction> editorActionClass) {
+        holder.setEditorName("Month Selector");
+        holder.setSize(36);
+        var inventory = holder.getInventory();
+
         // - - -  1  2  3 - - -
         // - - -  4  5  6 - - -
         // - - -  7  8  9 - - -
@@ -69,14 +76,17 @@ public class CalendarInventoryGenerator {
             val meta = itemStack.getItemMeta();
             meta.displayName(Component.text().content(String.valueOf(month)).asComponent());
             itemStack.setItemMeta(meta);
-            inventory.setItem(index, itemStack);
+            holder.addMenu(index, itemStack, editorActionClass);
         }
 
         return inventory;
     }
 
-    public static Inventory getDateSelector(InventoryHolder holder, int year, int month) {
-        var inventory = Bukkit.createInventory(holder, 45, "Date Selector");
+    public static Inventory getDateSelector(EditorMenuHolder holder, Class<? extends BaseEventEditorAction> editorActionClass, int year, int month) {
+        holder.setEditorName("Date Selector");
+        holder.setSize(45);
+        var inventory = holder.getInventory();
+
         // -  1  2  3  4  5  6  7 -
         // -  8  9 10 11 12 13 14 -
         // - 15 16 17 18 19 20 21 -
@@ -94,7 +104,6 @@ public class CalendarInventoryGenerator {
             if (index == line * 9 || index == (line + 1) * 9 - 1)
                 index++;
 
-            MofuEventAssist.getInstance().getLogger().log(Level.INFO, "Index " + index + " Line " + line + " Date" + date);
             if (Math.floorMod(index, 9) == 0) {
                 line++;
                 continue;
@@ -104,7 +113,7 @@ public class CalendarInventoryGenerator {
             val meta = itemStack.getItemMeta();
             meta.displayName(Component.text().content(String.valueOf(date)).asComponent());
             itemStack.setItemMeta(meta);
-            inventory.setItem(index, itemStack);
+            holder.addMenu(index, itemStack, editorActionClass);
 
             date++;
             index++;
@@ -113,8 +122,11 @@ public class CalendarInventoryGenerator {
         return inventory;
     }
 
-    public static Inventory getHourSelector(InventoryHolder holder) {
-        var inventory = Bukkit.createInventory(holder, 36, "Hour Selector");
+    public static Inventory getHourSelector(EditorMenuHolder holder, Class<? extends BaseEventEditorAction> editorActionClass) {
+        holder.setEditorName("Hour Selector");
+        holder.setSize(36);
+        var inventory = holder.getInventory();
+
         // - - -  1  2  3 - - -
         // - - -  4  5  6 - - -
         // - - -  7  8  9 - - -
@@ -133,37 +145,43 @@ public class CalendarInventoryGenerator {
             val meta = itemStack.getItemMeta();
             meta.displayName(Component.text().content(String.valueOf(hour)).asComponent());
             itemStack.setItemMeta(meta);
-            inventory.setItem(index, itemStack);
+            holder.addMenu(index, itemStack, editorActionClass);
         }
 
         return inventory;
     }
 
-    public static Inventory getAMPMSelector(InventoryHolder holder) {
-        var inventory = Bukkit.createInventory(holder, 9, "AM/PM Selector");
+    public static Inventory getAMPMSelector(EditorMenuHolder holder, Class<? extends BaseEventEditorAction> editorActionClass) {
+        holder.setEditorName("AM/PM Selector");
+        holder.setSize(9);
+        var inventory = holder.getInventory();
+
         var itemStackA = new ItemStack(Material.RED_STAINED_GLASS_PANE);
         val metaA = itemStackA.getItemMeta();
         metaA.displayName(Component.text().content("AM").asComponent());
         itemStackA.setItemMeta(metaA);
-        inventory.setItem(3, itemStackA);
+        holder.addMenu(3, itemStackA, SetStartDateAction.class);
         var itemStackP = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
         val metaP = itemStackP.getItemMeta();
         metaP.displayName(Component.text().content("PM").asComponent());
         itemStackP.setItemMeta(metaP);
-        inventory.setItem(5, itemStackP);
+        holder.addMenu(5, itemStackP, editorActionClass);
 
         return inventory;
     }
 
-    public static Inventory getMinutesSelector(InventoryHolder holder) {
-        var inventory = Bukkit.createInventory(holder, 9, "Minutes Selector");
+    public static Inventory getMinutesSelector(EditorMenuHolder holder, Class<? extends BaseEventEditorAction> editorActionClass) {
+        holder.setEditorName("Minutes Selector");
+        holder.setSize(9);
+        var inventory = holder.getInventory();
+
         for (int minutes = 0; minutes <= 4; minutes++) {
 
             var itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, minutes == 0 ? 0 : minutes * 15);
             val meta = itemStack.getItemMeta();
             meta.displayName(Component.text().content(String.valueOf(minutes)).asComponent());
             itemStack.setItemMeta(meta);
-            inventory.setItem(minutes, itemStack);
+            holder.addMenu(minutes, itemStack, editorActionClass);
         }
 
         return inventory;

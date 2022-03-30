@@ -18,6 +18,7 @@ package page.nafuchoco.mofu.mofueventassist.element;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.ToString;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
+@ToString
 public class GameEventBuilder {
     private final UUID eventId;
     private final EventOptions eventOptions;

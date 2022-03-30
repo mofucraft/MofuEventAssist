@@ -21,7 +21,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import page.nafuchoco.mofu.mofueventassist.editor.EditorMenuHolder;
+import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
+import page.nafuchoco.mofu.mofueventassist.editor.actions.SetStartDateAction;
 import page.nafuchoco.mofu.mofueventassist.element.GameEventBuilder;
+import page.nafuchoco.mofu.mofueventassist.utils.CalendarInventoryGenerator;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,10 +38,14 @@ public class CreateCommand implements SubCommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
 
-        } else if (args[0].equalsIgnoreCase("new")) {
-
-        } else if (args[0].equalsIgnoreCase("")) {
-
+        } else switch (args[0]) {
+            case "newevent": {
+                EventEditor editor = new EventEditor();
+                EditorMenuHolder holder = new EditorMenuHolder(editor);
+                if (sender instanceof Player player) {
+                    player.openInventory(CalendarInventoryGenerator.getYearSelector(holder, SetStartDateAction.class));
+                }
+            }
         }
         return false;
     }

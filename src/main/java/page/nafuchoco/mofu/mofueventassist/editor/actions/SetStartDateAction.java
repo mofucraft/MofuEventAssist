@@ -19,6 +19,7 @@ package page.nafuchoco.mofu.mofueventassist.editor.actions;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import page.nafuchoco.mofu.mofueventassist.editor.BaseEventEditorAction;
+import page.nafuchoco.mofu.mofueventassist.editor.EditorMenuHolder;
 import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
 import page.nafuchoco.mofu.mofueventassist.utils.CalendarInventoryGenerator;
 
@@ -39,53 +40,56 @@ public class SetStartDateAction extends BaseEventEditorAction {
 
     @Override
     public void execute(InventoryClickEvent event) {
-        if (getEditor().getWaitingAction() == this) {
-            var holder = event.getInventory().getHolder();
-            var value =
-                    switch (event.getCurrentItem().getItemMeta().getDisplayName()) {
-                        case "AM" -> 0;
+        if (event.getInventory().getHolder() instanceof EditorMenuHolder holder) {
+            if (getEditor().getWaitingAction() == this) {
+                var value =
+                        switch (event.getCurrentItem().getItemMeta().getDisplayName()) {
+                            case "AM" -> 0;
 
-                        case "PM" -> 1;
+                            case "PM" -> 1;
 
-                        default -> Integer.parseInt(event.getCurrentItem().getItemMeta().getDisplayName());
-                    };
+                            default -> Integer.parseInt(event.getCurrentItem().getItemMeta().getDisplayName());
+                        };
 
-            Inventory nextInventory = null;
-            if (year == -1) {
-                year = value;
-                nextInventory = CalendarInventoryGenerator.getMonthSelector(holder);
-            } else if (month == -1) {
-                month = value;
-                nextInventory = CalendarInventoryGenerator.getDateSelector(holder, year, month);
-            } else if (date == -1) {
-                date = value;
-                nextInventory = CalendarInventoryGenerator.getHourSelector(holder);
-            } else if (hour == -1) {
-                hour = value;
-                nextInventory = CalendarInventoryGenerator.getAMPMSelector(holder);
-            } else if (pm == -1) {
-                pm = value;
-                nextInventory = CalendarInventoryGenerator.getMinutesSelector(holder);
-            } else if (minutes == -1) {
-                minutes = value;
+                Inventory nextInventory = null;
+                if (year == -1) {
+                    year = value;
+                    nextInventory = CalendarInventoryGenerator.getMonthSelector(new EditorMenuHolder(holder.getEditor()), this.getClass());
+                } else if (month == -1) {
+                    month = value;
+                    nextInventory = CalendarInventoryGenerator.getDateSelector(new EditorMenuHolder(holder.getEditor()), this.getClass(), year, month);
+                } else if (date == -1) {
+                    date = value;
+                    nextInventory = CalendarInventoryGenerator.getHourSelector(new EditorMenuHolder(holder.getEditor()), this.getClass());
+                } else if (hour == -1) {
+                    hour = value;
+                    nextInventory = CalendarInventoryGenerator.getAMPMSelector(new EditorMenuHolder(holder.getEditor()), this.getClass());
+                } else if (pm == -1) {
+                    pm = value;
+                    nextInventory = CalendarInventoryGenerator.getMinutesSelector(new EditorMenuHolder(holder.getEditor()), this.getClass());
+                } else if (minutes == -1) {
+                    minutes = value;
 
-                var calendar = Calendar.getInstance();
-                calendar.set(Calendar.YEAR, year);
-                calendar.set(Calendar.MONTH, month - 1);
-                calendar.set(Calendar.DATE, date);
-                calendar.set(Calendar.HOUR, hour);
-                calendar.set(Calendar.AM_PM, pm);
-                calendar.set(Calendar.MINUTE, minutes);
-                getEditor().getBuilder().setEventStartTime(calendar.getTime().getTime());
+                    var calendar = Calendar.getInstance();
+                    calendar.set(Calendar.YEAR, year);
+                    calendar.set(Calendar.MONTH, month - 1);
+                    calendar.set(Calendar.DATE, date);
+                    calendar.set(Calendar.HOUR, hour);
+                    calendar.set(Calendar.AM_PM, pm);
+                    calendar.set(Calendar.MINUTE, minutes);
+                    getEditor().getBuilder().setEventStartTime(calendar.getTime().getTime());
 
-                nextInventory = holder.getInventory();
-                getEditor().setWaitingAction(null);
+                    getEditor().setWaitingAction(null);
+                }
+
+                if (nextInventory != null)
+                    event.getWhoClicked().openInventory(nextInventory);
+            } else {
+                getEditor().setWaitingAction(this);
+                event.getWhoClicked().openInventory(CalendarInventoryGenerator.getYearSelector(new EditorMenuHolder(holder.getEditor()), this.getClass()));
             }
-
-            event.getWhoClicked().openInventory(nextInventory);
         } else {
-            getEditor().setWaitingAction(this);
-            event.getWhoClicked().openInventory(CalendarInventoryGenerator.getYearSelector(event.getInventory().getHolder()));
+            throw new IllegalStateException("The EventEditorAction must hold an EditorMenuHolder.");
         }
     }
 }

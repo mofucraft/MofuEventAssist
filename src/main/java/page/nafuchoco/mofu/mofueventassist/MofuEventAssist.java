@@ -33,6 +33,10 @@ import page.nafuchoco.mofu.mofueventassist.command.HelpCommand;
 import page.nafuchoco.mofu.mofueventassist.command.SubCommandExecutor;
 import page.nafuchoco.mofu.mofueventassist.database.DatabaseConnector;
 import page.nafuchoco.mofu.mofueventassist.database.EventsTable;
+import page.nafuchoco.mofu.mofueventassist.editor.EditorClickEventListener;
+import page.nafuchoco.mofu.mofueventassist.editor.EditorMenuHolder;
+import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
+import page.nafuchoco.mofu.mofueventassist.editor.actions.SetStartDateAction;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventEndEvent;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventPlayerEntryEvent;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventStartEvent;
@@ -91,6 +95,8 @@ public final class MofuEventAssist extends JavaPlugin {
             return;
         }
 
+        getServer().getPluginManager().registerEvents(new EditorClickEventListener(), this);
+
         // イベント開始・終了の定期確認
         Bukkit.getServer().getScheduler().runTaskTimer(this, new EventTimer(getEventRegistry()), 0L, 20L);
     }
@@ -108,29 +114,31 @@ public final class MofuEventAssist extends JavaPlugin {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (command.getLabel().equals("test")) {
             if (args.length >= 1 && sender instanceof Player player) {
+                EventEditor editor = new EventEditor();
+                EditorMenuHolder holder = new EditorMenuHolder(editor);
                 switch (args[0]) {
                     case "minutesCalendar":
-                        player.openInventory(CalendarInventoryGenerator.getMinutesSelector(player));
+                        player.openInventory(CalendarInventoryGenerator.getMinutesSelector(holder, SetStartDateAction.class));
                         break;
 
                     case "hourCalendar":
-                        player.openInventory(CalendarInventoryGenerator.getHourSelector(player));
+                        player.openInventory(CalendarInventoryGenerator.getHourSelector(holder, SetStartDateAction.class));
                         break;
 
                     case "dayCalender":
-                        player.openInventory(CalendarInventoryGenerator.getDateSelector(player, 2022, 3));
+                        player.openInventory(CalendarInventoryGenerator.getDateSelector(holder, SetStartDateAction.class, 2022, 3));
                         break;
 
                     case "monthCalendar":
-                        player.openInventory(CalendarInventoryGenerator.getMonthSelector(player));
+                        player.openInventory(CalendarInventoryGenerator.getMonthSelector(holder, SetStartDateAction.class));
                         break;
 
                     case "yearCalender":
-                        player.openInventory(CalendarInventoryGenerator.getYearSelector(player));
+                        player.openInventory(CalendarInventoryGenerator.getYearSelector(holder, SetStartDateAction.class));
                         break;
 
                     case "AMPMCalendar":
-                        player.openInventory(CalendarInventoryGenerator.getAMPMSelector(player));
+                        player.openInventory(CalendarInventoryGenerator.getAMPMSelector(holder, SetStartDateAction.class));
                         break;
 
                     default:
