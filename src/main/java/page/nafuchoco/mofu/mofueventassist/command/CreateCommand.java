@@ -35,13 +35,14 @@ public class CreateCommand implements SubCommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (args.length == 0) {
+        if (sender instanceof Player player) {
+            if (args.length == 0) {
 
-        } else switch (args[0]) {
-            case "newevent": {
-                EventEditor editor = new EventEditor();
-                EditorMenuHolder holder = new EditorMenuHolder(editor);
-                if (sender instanceof Player player) {
+            } else switch (args[0]) {
+                case "newevent": {
+                    EventEditor editor = new EventEditor();
+                    EditorMenuHolder holder = new EditorMenuHolder(editor);
+                    editor.getBuilder().setEventOwner(player.getUniqueId());
                     player.openInventory(EditorMenuGenerator.getMainMenu(holder));
                 }
             }

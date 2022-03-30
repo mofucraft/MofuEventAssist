@@ -16,23 +16,23 @@
 
 package page.nafuchoco.mofu.mofueventassist.editor.actions.select;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import page.nafuchoco.mofu.mofueventassist.editor.EditorMenuHolder;
+import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
 import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
 import page.nafuchoco.mofu.mofueventassist.editor.actions.BaseEventEditorAction;
-import page.nafuchoco.mofu.mofueventassist.utils.EditorMenuGenerator;
 
-public class SetLocationAction extends BaseEventEditorAction {
+public class EventSaveAction extends BaseEventEditorAction {
 
-    public SetLocationAction(EventEditor editor) {
+    public EventSaveAction(EventEditor editor) {
         super(editor);
     }
 
     @Override
     public void execute(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() instanceof EditorMenuHolder holder) {
-            getEditor().getBuilder().setEventLocation(event.getWhoClicked().getLocation());
-            event.getWhoClicked().openInventory(EditorMenuGenerator.getMainMenu(new EditorMenuHolder(holder.getEditor())));
-        }
+        var gameEvent = getEditor().getBuilder().build();
+        MofuEventAssist.getInstance().getEventRegistry().registerEvent(gameEvent);
+        event.getWhoClicked().sendMessage(Component.text("Your event was saved correctly!").color(NamedTextColor.GREEN));
     }
 }

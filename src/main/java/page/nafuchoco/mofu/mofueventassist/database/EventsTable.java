@@ -108,7 +108,7 @@ public class EventsTable extends DatabaseTable {
         String entrantJson = null;
         String eventOptionsJson = null;
         if (gameEvent.getEventLocation() != null)
-            locationJson = MAPPER.writeValueAsString(gameEvent.getEventLocation());
+            locationJson = MAPPER.writeValueAsString(gameEvent.getEventLocation().serialize());
         if (gameEvent.getEntrant() != null)
             entrantJson = MAPPER.writeValueAsString(gameEvent.getEntrant());
         if (gameEvent.getEventOptions() != null)
@@ -193,7 +193,8 @@ public class EventsTable extends DatabaseTable {
         List<UUID> entrant = new ArrayList<>();
         EventOptions eventOptions = null;
         if (!StringUtils.isEmpty(locationJson))
-            eventLocation = MAPPER.readValue(locationJson, Location.class);
+            eventLocation = Location.deserialize(MAPPER.readValue(locationJson, new TypeReference<>() {
+            }));
         if (!StringUtils.isEmpty(entrantJson))
             entrant = MAPPER.readValue(entrantJson, new TypeReference<List<String>>() {
                     }).stream()
