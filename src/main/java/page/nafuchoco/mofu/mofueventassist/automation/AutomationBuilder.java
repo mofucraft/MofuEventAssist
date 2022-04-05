@@ -87,8 +87,8 @@ public class AutomationBuilder {
                                 .toArray(Class[]::new)
                 ).newInstance(automationActionOptionsMap.values().toArray()); // Classからインスタンスの生成
                 eventAutomationAction = (AutomationAction) automationActionType.getActionClass().getDeclaredConstructor(
-                        GameEvent.class, ActionOptions.class
-                ).newInstance(gameEvent, actionOptions);
+                        ActionOptions.class
+                ).newInstance(actionOptions);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
                 return null;
