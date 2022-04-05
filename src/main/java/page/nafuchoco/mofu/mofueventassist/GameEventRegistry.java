@@ -17,43 +17,59 @@
 package page.nafuchoco.mofu.mofueventassist;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import page.nafuchoco.mofu.mofueventassist.database.EventsTable;
-import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
+import page.nafuchoco.mofu.mofueventassist.element.DefaultGameEvent;
 import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
 import page.nafuchoco.mofu.mofueventassist.element.GameEventStatus;
 
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
 public class GameEventRegistry {
     private final EventsTable eventsTable;
 
     private final Map<GameEventStatus, List<GameEvent>> eventStore;
-    private final Map<Player, EventEditor> editorStore;
 
     public GameEventRegistry(EventsTable eventsTable) throws SQLException {
         this.eventsTable = eventsTable;
         eventStore = new HashMap<>();
-        editorStore = new HashMap<>();
         eventStore.put(GameEventStatus.UPCOMING, eventsTable.getUpcomingEvents());
         eventStore.put(GameEventStatus.HOLDING, eventsTable.getHoldingEvents());
+        eventStore.put(GameEventStatus.ENDED, new ArrayList<>());
     }
 
-    public List<GameEvent> getEvents(@NotNull GameEventStatus eventStatus) {
+    public GameEvent getEvent(UUID id) {
+        return getEvents().stream().filter(event -> event.getEventId().equals(id)).findFirst().orElse(null);
+    }
+
+    public List<GameEvent> getEvents(GameEventStatus eventStatus) {
+        if (eventStatus == null)
+            return getEvents();
         return Collections.unmodifiableList(eventStore.get(eventStatus));
+    }
+
+    private List<GameEvent> getEvents() {
+        return eventStore.keySet().stream().flatMap(key -> eventStore.get(key).stream()).toList();
     }
 
     public void registerEvent(@NotNull GameEvent event) {
         try {
             eventsTable.registerEvent(event);
             eventStore.get(event.getEventStatus()).add(event);
+        } catch (JsonProcessingException | SQLException e) {
+            MofuEventAssist.getInstance().getLogger().log(
+                    Level.WARNING,
+                    "An error has occurred while registering event information.",
+                    e
+            );
+        }
+    }
+
+    public void updateEventOptions(@NotNull GameEvent event) {
+        try {
+            eventsTable.updateEventOptions(event);
         } catch (JsonProcessingException | SQLException e) {
             MofuEventAssist.getInstance().getLogger().log(
                     Level.WARNING,
@@ -77,19 +93,9 @@ public class GameEventRegistry {
     }
 
     protected void changeEventStatus(GameEvent gameEvent, GameEventStatus oldStatus, GameEventStatus newStatus) {
+        if (gameEvent instanceof DefaultGameEvent event)
+            event.setEventStatus(newStatus);
         eventStore.get(oldStatus).remove(gameEvent);
         eventStore.get(newStatus).add(gameEvent);
-    }
-
-    public void registerEditor(Player player, @NotNull EventEditor editor) {
-        editorStore.put(player, editor);
-    }
-
-    public @Nullable EventEditor getEventBuilder(Player player) {
-        return editorStore.get(player);
-    }
-
-    protected void clearEditor(Player player) {
-        editorStore.remove(player);
     }
 }

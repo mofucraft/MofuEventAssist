@@ -34,6 +34,10 @@ public class AutomationBuilder {
         actions = new ArrayList<>();
     }
 
+    public GameEvent getGameEvent() {
+        return gameEvent;
+    }
+
     public EventAutomation build() {
         return new EventAutomation(actions, actionDelayTime);
     }
@@ -49,6 +53,10 @@ public class AutomationBuilder {
         return this;
     }
 
+    public List<AutomationAction> getActions() {
+        return Collections.unmodifiableList(actions);
+    }
+
 
     public static class AutomationActionBuilder {
         private final GameEvent gameEvent;
@@ -60,7 +68,14 @@ public class AutomationBuilder {
             this.gameEvent = gameEvent;
         }
 
+        public GameEvent getGameEvent() {
+            return gameEvent;
+        }
+
         public AutomationAction build() {
+            if (!canBuild())
+                throw new IllegalStateException("The configuration required for the build has not been completed.");
+
             AutomationAction eventAutomationAction;
             ActionOptions actionOptions;
 
@@ -68,7 +83,7 @@ public class AutomationBuilder {
                 // フィールドの数でコンストラクタを判定、呼び出し
                 actionOptions = (ActionOptions) automationActionType.getActionOptionsClass().getDeclaredConstructor(
                         Arrays.stream(automationActionType.getActionOptionsClass().getDeclaredFields())
-                                .map(f -> f.getType())
+                                .map(Field::getType)
                                 .toArray(Class[]::new)
                 ).newInstance(automationActionOptionsMap.values().toArray()); // Classからインスタンスの生成
                 eventAutomationAction = (AutomationAction) automationActionType.getActionClass().getDeclaredConstructor(
@@ -82,9 +97,15 @@ public class AutomationBuilder {
             return eventAutomationAction;
         }
 
+        public boolean canBuild() {
+            if (automationActionOptionsMap != null && automationActionOptionsMap.values().stream().noneMatch(Objects::isNull))
+                return true;
+            return false;
+        }
 
-        public AutomationActionBuilder setEventAutomationActionType(String actionType) {
-            automationActionType = AutomationActionType.valueOf(actionType);
+
+        public AutomationActionBuilder setEventAutomationActionType(AutomationActionType actionType) {
+            automationActionType = actionType;
             return this;
         }
 

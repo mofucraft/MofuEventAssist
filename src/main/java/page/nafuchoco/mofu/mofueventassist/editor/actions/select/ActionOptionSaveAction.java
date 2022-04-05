@@ -22,17 +22,20 @@ import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
 import page.nafuchoco.mofu.mofueventassist.editor.actions.BaseEventEditorAction;
 import page.nafuchoco.mofu.mofueventassist.utils.EditorMenuGenerator;
 
-public class SetLocationAction extends BaseEventEditorAction {
+public class ActionOptionSaveAction extends BaseEventEditorAction {
 
-    public SetLocationAction(EventEditor editor) {
+    public ActionOptionSaveAction(EventEditor editor) {
         super(editor);
     }
 
     @Override
     public void execute(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() instanceof EditorMenuHolder holder) {
-            getEditor().getBuilder().setEventLocation(event.getWhoClicked().getLocation());
-            event.getWhoClicked().openInventory(EditorMenuGenerator.getMainMenu(new EditorMenuHolder(getEditor())));
+        if (getEditor().getAutomationBuilder() != null) {
+            var automationAction = getEditor().getActionBuilder().build();
+            getEditor().getAutomationBuilder().addAutomationAction(automationAction);
+            getEditor().setActionBuilder(null);
+            getEditor().setWaitingAction(null);
+            event.getWhoClicked().openInventory(EditorMenuGenerator.getAutomationActionListMenu(new EditorMenuHolder(getEditor())));
         }
     }
 }

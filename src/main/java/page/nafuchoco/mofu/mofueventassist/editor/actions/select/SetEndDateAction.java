@@ -55,19 +55,19 @@ public class SetEndDateAction extends BaseEventEditorAction {
                 Inventory nextInventory = null;
                 if (year == -1) {
                     year = value;
-                    nextInventory = CalendarInventoryGenerator.getMonthSelector(new EditorMenuHolder(holder.getEditor()), this.getClass());
+                    nextInventory = CalendarInventoryGenerator.getMonthSelector(new EditorMenuHolder(getEditor()), this.getClass());
                 } else if (month == -1) {
                     month = value;
-                    nextInventory = CalendarInventoryGenerator.getDateSelector(new EditorMenuHolder(holder.getEditor()), this.getClass(), year, month);
+                    nextInventory = CalendarInventoryGenerator.getDateSelector(new EditorMenuHolder(getEditor()), this.getClass(), year, month);
                 } else if (date == -1) {
                     date = value;
-                    nextInventory = CalendarInventoryGenerator.getHourSelector(new EditorMenuHolder(holder.getEditor()), this.getClass());
+                    nextInventory = CalendarInventoryGenerator.getHourSelector(new EditorMenuHolder(getEditor()), this.getClass());
                 } else if (hour == -1) {
                     hour = value;
-                    nextInventory = CalendarInventoryGenerator.getAMPMSelector(new EditorMenuHolder(holder.getEditor()), this.getClass());
+                    nextInventory = CalendarInventoryGenerator.getAMPMSelector(new EditorMenuHolder(getEditor()), this.getClass());
                 } else if (pm == -1) {
                     pm = value;
-                    nextInventory = CalendarInventoryGenerator.getMinutesSelector(new EditorMenuHolder(holder.getEditor()), this.getClass());
+                    nextInventory = CalendarInventoryGenerator.getMinutesSelector(new EditorMenuHolder(getEditor()), this.getClass());
                 } else if (minutes == -1) {
                     minutes = value;
 
@@ -81,14 +81,14 @@ public class SetEndDateAction extends BaseEventEditorAction {
                     getEditor().getBuilder().setEventEndTime(calendar.getTime().getTime());
 
                     getEditor().setWaitingAction(null);
-                    nextInventory = EditorMenuGenerator.getMainMenu(new EditorMenuHolder(holder.getEditor()));
+                    nextInventory = EditorMenuGenerator.getMainMenu(new EditorMenuHolder(getEditor()));
                 }
 
                 if (nextInventory != null)
                     event.getWhoClicked().openInventory(nextInventory);
             } else {
                 getEditor().setWaitingAction(this);
-                event.getWhoClicked().openInventory(CalendarInventoryGenerator.getYearSelector(new EditorMenuHolder(holder.getEditor()), this.getClass()));
+                event.getWhoClicked().openInventory(CalendarInventoryGenerator.getYearSelector(new EditorMenuHolder(getEditor()), this.getClass()));
             }
         } else {
             throw new IllegalStateException("The EventEditorAction must hold an EditorMenuHolder.");

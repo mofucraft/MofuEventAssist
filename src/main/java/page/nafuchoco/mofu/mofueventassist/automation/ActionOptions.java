@@ -19,7 +19,7 @@ package page.nafuchoco.mofu.mofueventassist.automation;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
- * このインターフェイスを実装したクラス内にあるフィールドを全てアクションのオプションとして扱う。<br>
+ * この インターフェイスを実装したクラス内にあるフィールドを全てアクションのオプションとして扱う。<br>
  * 全ての型はStringとし、全てのフィールドをコンストラクタで初期化する。
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)

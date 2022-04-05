@@ -16,7 +16,9 @@
 
 package page.nafuchoco.mofu.mofueventassist.editor;
 
+import page.nafuchoco.mofu.mofueventassist.automation.AutomationBuilder;
 import page.nafuchoco.mofu.mofueventassist.editor.actions.EditorAction;
+import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
 import page.nafuchoco.mofu.mofueventassist.element.GameEventBuilder;
 
 public class EventEditor {
@@ -38,5 +40,44 @@ public class EventEditor {
 
     public void setWaitingAction(EditorAction waitingAction) {
         this.waitingAction = waitingAction;
+    }
+
+
+    // ここから下はアクション設定用
+    private GameEvent builtEvent;
+    private int automationType = -1; // -1: not selected, 0: start, 1: end
+    private AutomationBuilder automationBuilder;
+    private AutomationBuilder.AutomationActionBuilder actionBuilder;
+
+    public GameEvent getBuiltEvent() {
+        return builtEvent;
+    }
+
+    public void setBuiltEvent(GameEvent builtEvent) {
+        this.builtEvent = builtEvent;
+    }
+
+    public int getAutomationType() {
+        return automationType;
+    }
+
+    public void setAutomationType(int automationType) {
+        this.automationType = automationType;
+    }
+
+    public AutomationBuilder getAutomationBuilder() {
+        return automationBuilder;
+    }
+
+    public void setAutomationBuilder(AutomationBuilder automationBuilder) {
+        this.automationBuilder = automationBuilder;
+    }
+
+    public AutomationBuilder.AutomationActionBuilder getActionBuilder() {
+        return actionBuilder;
+    }
+
+    public void setActionBuilder(AutomationBuilder.AutomationActionBuilder actionBuilder) {
+        this.actionBuilder = actionBuilder;
     }
 }

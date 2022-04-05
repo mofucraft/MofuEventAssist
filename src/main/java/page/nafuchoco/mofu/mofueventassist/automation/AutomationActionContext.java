@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 NAFU_at
+ * Copyright 2022 NAFU_at
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,9 @@
  * limitations under the License.
  */
 
-package page.nafuchoco.mofu.mofueventassist.event;
+package page.nafuchoco.mofu.mofueventassist.automation;
 
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
 import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
 
-public abstract class GameEventEvent extends Event {
-    private static final HandlerList handlers = new HandlerList();
-
-    private final GameEvent gameEvent;
-
-    public GameEventEvent(GameEvent gameEvent) {
-        this.gameEvent = gameEvent;
-    }
-
-    public GameEvent getGameEvent() {
-        return gameEvent;
-    }
+public record AutomationActionContext(GameEvent gameEvent) {
 }

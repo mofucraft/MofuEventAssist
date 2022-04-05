@@ -40,7 +40,7 @@ public class DefaultGameEvent implements GameEvent {
     private final EventOptions eventOptions;
 
     public void setEventStatus(GameEventStatus eventStatus) {
-        var oldStatus = GameEventStatus.valueOf(eventStatus.name());
+        var oldStatus = GameEventStatus.valueOf(this.eventStatus.name());
         this.eventStatus = eventStatus;
         Bukkit.getServer().getPluginManager().callEvent(new GameEventStatusUpdateEvent(this, oldStatus, eventStatus));
     }

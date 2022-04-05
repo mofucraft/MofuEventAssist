@@ -42,7 +42,7 @@ public class CalendarInventoryGenerator {
         for (int i = 0; i < 9; i++) {
             var itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
             val meta = itemStack.getItemMeta();
-            meta.displayName(Component.text().content(String.valueOf(year)).asComponent());
+            meta.displayName(Component.text(String.valueOf(year)).asComponent());
             itemStack.setItemMeta(meta);
             holder.addMenu(i, itemStack, editorActionClass);
             year++;
@@ -72,7 +72,7 @@ public class CalendarInventoryGenerator {
 
             var itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, month);
             val meta = itemStack.getItemMeta();
-            meta.displayName(Component.text().content(String.valueOf(month)).asComponent());
+            meta.displayName(Component.text(String.valueOf(month)).asComponent());
             itemStack.setItemMeta(meta);
             holder.addMenu(index, itemStack, editorActionClass);
         }
@@ -108,7 +108,7 @@ public class CalendarInventoryGenerator {
 
             var itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, date);
             val meta = itemStack.getItemMeta();
-            meta.displayName(Component.text().content(String.valueOf(date)).asComponent());
+            meta.displayName(Component.text(String.valueOf(date)).asComponent());
             itemStack.setItemMeta(meta);
             holder.addMenu(index, itemStack, editorActionClass);
 
@@ -139,7 +139,7 @@ public class CalendarInventoryGenerator {
 
             var itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, hour);
             val meta = itemStack.getItemMeta();
-            meta.displayName(Component.text().content(String.valueOf(hour)).asComponent());
+            meta.displayName(Component.text(String.valueOf(hour)).asComponent());
             itemStack.setItemMeta(meta);
             holder.addMenu(index, itemStack, editorActionClass);
         }
@@ -153,12 +153,12 @@ public class CalendarInventoryGenerator {
 
         var itemStackA = new ItemStack(Material.RED_STAINED_GLASS_PANE);
         val metaA = itemStackA.getItemMeta();
-        metaA.displayName(Component.text().content("AM").asComponent());
+        metaA.displayName(Component.text("AM").asComponent());
         itemStackA.setItemMeta(metaA);
         holder.addMenu(3, itemStackA, SetStartDateAction.class);
         var itemStackP = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
         val metaP = itemStackP.getItemMeta();
-        metaP.displayName(Component.text().content("PM").asComponent());
+        metaP.displayName(Component.text("PM").asComponent());
         itemStackP.setItemMeta(metaP);
         holder.addMenu(5, itemStackP, editorActionClass);
 
@@ -172,7 +172,7 @@ public class CalendarInventoryGenerator {
         for (int minutes = 0; minutes < 4; minutes++) {
             var itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, minutes == 0 ? 1 : minutes * 15);
             val meta = itemStack.getItemMeta();
-            meta.displayName(Component.text().content(String.valueOf(minutes * 15)).asComponent());
+            meta.displayName(Component.text(String.valueOf(minutes * 15)).asComponent());
             itemStack.setItemMeta(meta);
             holder.addMenu(minutes + 2, itemStack, editorActionClass);
         }

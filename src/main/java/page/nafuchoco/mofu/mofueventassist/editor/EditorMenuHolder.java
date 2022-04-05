@@ -21,6 +21,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
 import page.nafuchoco.mofu.mofueventassist.editor.actions.BaseEventEditorAction;
 import page.nafuchoco.mofu.mofueventassist.editor.actions.EventEditorAction;
@@ -75,9 +76,11 @@ public class EditorMenuHolder implements InventoryHolder {
 
     private Map<Integer, EventEditorAction> menuActionMap = new HashMap<>();
 
-    public void addMenu(int index, ItemStack itemStack, Class<? extends BaseEventEditorAction> editorActionClass) {
+    public void addMenu(int index, @NotNull ItemStack itemStack, @Nullable Class<? extends BaseEventEditorAction> editorActionClass) {
+        EventEditorAction editorAction = null;
         try {
-            EventEditorAction editorAction = editorActionClass.getConstructor(EventEditor.class).newInstance(getEditor());
+            if (editorActionClass != null)
+                editorAction = editorActionClass.getConstructor(EventEditor.class).newInstance(getEditor());
             getInventory().setItem(index, itemStack);
             menuActionMap.put(index, editorAction);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
@@ -95,7 +98,7 @@ public class EditorMenuHolder implements InventoryHolder {
         menuActionMap.remove(index);
     }
 
-    public EventEditorAction getAction(int index) {
+    public @Nullable EventEditorAction getAction(int index) {
         return menuActionMap.get(index);
     }
 }

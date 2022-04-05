@@ -18,38 +18,35 @@ package page.nafuchoco.mofu.mofueventassist;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import page.nafuchoco.mofu.mofueventassist.automation.EventAutomationAction;
+import page.nafuchoco.mofu.mofueventassist.automation.AutomationActionContext;
+import page.nafuchoco.mofu.mofueventassist.automation.actions.AutomationAction;
 import page.nafuchoco.mofu.mofueventassist.command.CreateCommand;
+import page.nafuchoco.mofu.mofueventassist.command.EventCommand;
 import page.nafuchoco.mofu.mofueventassist.command.HelpCommand;
 import page.nafuchoco.mofu.mofueventassist.command.SubCommandExecutor;
 import page.nafuchoco.mofu.mofueventassist.database.DatabaseConnector;
 import page.nafuchoco.mofu.mofueventassist.database.EventsTable;
 import page.nafuchoco.mofu.mofueventassist.editor.EditorClickEventListener;
 import page.nafuchoco.mofu.mofueventassist.editor.EditorInputEventListener;
-import page.nafuchoco.mofu.mofueventassist.editor.EditorMenuHolder;
-import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
-import page.nafuchoco.mofu.mofueventassist.editor.actions.select.SetStartDateAction;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventEndEvent;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventPlayerEntryEvent;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventStartEvent;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventStatusUpdateEvent;
-import page.nafuchoco.mofu.mofueventassist.utils.CalendarInventoryGenerator;
 
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
-public final class MofuEventAssist extends JavaPlugin {
+public final class MofuEventAssist extends JavaPlugin implements Listener {
     private static MofuEventAssist instance;
     private ConfigLoader configLoader;
     private EventAssistConfig config;
@@ -57,6 +54,7 @@ public final class MofuEventAssist extends JavaPlugin {
     private DatabaseConnector connector;
     private EventsTable eventsTable;
 
+    private Map<String, SubCommandExecutor> subCommands;
     private GameEventRegistry eventRegistry;
     private EditorInputEventListener inputListener;
 
@@ -89,6 +87,12 @@ public final class MofuEventAssist extends JavaPlugin {
         eventsTable = new EventsTable(getEventAssistConfig().getTablePrefix(), "events", connector);
         try {
             eventsTable.createTable();
+
+            // Clean Up Ended Events
+            var events = new ArrayList<>();
+            events.addAll(eventsTable.getUpcomingEvents());
+            events.addAll(eventsTable.getHoldingEvents());
+
             // Load events
             eventRegistry = new GameEventRegistry(eventsTable);
         } catch (SQLException e) {
@@ -97,9 +101,15 @@ public final class MofuEventAssist extends JavaPlugin {
             return;
         }
 
+        // Command Initialization
+        subCommands = new HashMap<>();
+        subCommands.put("register", new CreateCommand());
+        subCommands.put("event", new EventCommand());
+
         inputListener = new EditorInputEventListener();
         getServer().getPluginManager().registerEvents(new EditorClickEventListener(), this);
         getServer().getPluginManager().registerEvents(inputListener, this);
+        getServer().getPluginManager().registerEvents(this, this);
 
         // イベント開始・終了の定期確認
         Bukkit.getServer().getScheduler().runTaskTimer(this, new EventTimer(getEventRegistry()), 0L, 20L);
@@ -116,75 +126,27 @@ public final class MofuEventAssist extends JavaPlugin {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (command.getLabel().equals("test")) {
-            if (args.length >= 1 && sender instanceof Player player) {
-                EventEditor editor = new EventEditor();
-                EditorMenuHolder holder = new EditorMenuHolder(editor);
-                switch (args[0]) {
-                    case "minutesCalendar":
-                        player.openInventory(CalendarInventoryGenerator.getMinutesSelector(holder, SetStartDateAction.class));
-                        break;
+        SubCommandExecutor executor = getSubCommand(args);
 
-                    case "hourCalendar":
-                        player.openInventory(CalendarInventoryGenerator.getHourSelector(holder, SetStartDateAction.class));
-                        break;
-
-                    case "dayCalender":
-                        player.openInventory(CalendarInventoryGenerator.getDateSelector(holder, SetStartDateAction.class, 2022, 3));
-                        break;
-
-                    case "monthCalendar":
-                        player.openInventory(CalendarInventoryGenerator.getMonthSelector(holder, SetStartDateAction.class));
-                        break;
-
-                    case "yearCalender":
-                        player.openInventory(CalendarInventoryGenerator.getYearSelector(holder, SetStartDateAction.class));
-                        break;
-
-                    case "AMPMCalendar":
-                        player.openInventory(CalendarInventoryGenerator.getAMPMSelector(holder, SetStartDateAction.class));
-                        break;
-
-                    default:
-                        break;
-                }
-                return true;
-            }
-        } else {
-            SubCommandExecutor executor = getSubCommand(args);
-
-            if (executor != null)
-                return executor.onCommand(sender, command, label, Arrays.copyOfRange(args, 1, args.length));
-            else
-                return HELP_COMMAND_EXECUTOR.onCommand(sender, command, label, args);
-        }
-
-        return false;
+        if (executor != null)
+            return executor.onCommand(sender, command, label, Arrays.copyOfRange(args, 1, args.length));
+        else
+            return HELP_COMMAND_EXECUTOR.onCommand(sender, command, label, args);
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        if (command.getLabel().equals("test")) {
-
-
-        } else {
-            SubCommandExecutor executor = getSubCommand(args);
-            if (executor != null)
-                return executor.onTabComplete(sender, command, alias, Arrays.copyOfRange(args, 1, args.length));
-        }
+        SubCommandExecutor executor = getSubCommand(args);
+        if (executor != null)
+            return executor.onTabComplete(sender, command, alias, Arrays.copyOfRange(args, 1, args.length));
         return null;
     }
 
     private SubCommandExecutor getSubCommand(@NotNull String[] args) {
         SubCommandExecutor executor = null;
 
-        if (args.length != 0) {
-            switch (args[0]) {
-                case "register":
-                    executor = new CreateCommand();
-                    break;
-            }
-        }
+        if (args.length != 0)
+            executor = subCommands.get(args[0]);
         return executor;
     }
 
@@ -193,7 +155,7 @@ public final class MofuEventAssist extends JavaPlugin {
     public void onGameEventStatusUpdateEvent(GameEventStatusUpdateEvent event) {
         try {
             eventsTable.updateEventStatus(event.getGameEvent());
-            getEventRegistry().changeEventStatus(event.getGameEvent(), event.getOldStatus(), event.getNewStatus());
+            getLogger().info("Updated event status: " + event.getGameEvent().getEventName() + "(" + event.getOldStatus().name() + " -> " + event.getNewStatus().name() + ")");
         } catch (SQLException e) {
             getLogger().log(
                     Level.WARNING,
@@ -206,15 +168,51 @@ public final class MofuEventAssist extends JavaPlugin {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onGameEventStartEvent(GameEventStartEvent event) {
         Bukkit.getServer().getScheduler().runTaskAsynchronously(this, () -> {
-            event.getGameEvent().getEventOptions().getStartAutomation().getActions().forEach(EventAutomationAction::execute);
+            getLogger().info("Perform event start automation: " + event.getGameEvent().getEventName());
+            if (event.getGameEvent().getEventOptions().getStartAutomation() != null) {
+                for (AutomationAction automationAction : event.getGameEvent().getEventOptions().getStartAutomation().getActions()) {
+                    automationAction.execute(new AutomationActionContext(event.getGameEvent()));
+                    try {
+                        Thread.sleep(event.getGameEvent().getEventOptions().getStartAutomation().getAutomationDelayTime() * 1000);
+                    } catch (InterruptedException e) {
+                        getLogger().log(Level.WARNING,
+                                """
+                                        An interrupt has occurred in the automation thread.
+                                        Normally this error is not reproduced.
+                                        If the problem repeats, please report it to the developer with the status of the operation.
+                                        """,
+                                e);
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
         });
+        getEventRegistry().changeEventStatus(event.getGameEvent(), event.getOldStatus(), event.getNewStatus());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onGameEventEndEvent(GameEventEndEvent event) {
         Bukkit.getServer().getScheduler().runTaskAsynchronously(this, () -> {
-            event.getGameEvent().getEventOptions().getEndAutomation().getActions().forEach(EventAutomationAction::execute);
+            getLogger().info("Perform event end automation: " + event.getGameEvent().getEventName());
+            if (event.getGameEvent().getEventOptions().getEndAutomation() != null) {
+                for (AutomationAction automationAction : event.getGameEvent().getEventOptions().getEndAutomation().getActions()) {
+                    automationAction.execute(new AutomationActionContext(event.getGameEvent()));
+                    try {
+                        Thread.sleep(event.getGameEvent().getEventOptions().getEndAutomation().getAutomationDelayTime() * 1000);
+                    } catch (InterruptedException e) {
+                        getLogger().log(Level.WARNING,
+                                """
+                                        An interrupt has occurred in the automation thread.
+                                        Normally this error is not reproduced.
+                                        If the problem repeats, please report it to the developer with the status of the operation.
+                                        """,
+                                e);
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
         });
+        getEventRegistry().changeEventStatus(event.getGameEvent(), event.getOldStatus(), event.getNewStatus());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -222,6 +220,7 @@ public final class MofuEventAssist extends JavaPlugin {
         event.getGameEvent().getEntrant().add(event.getPlayer().getUniqueId());
         try {
             eventsTable.updateEntrantPlayer(event.getGameEvent());
+            event.getPlayer().sendMessage(ChatColor.GREEN + "You have entered the event.");
         } catch (JsonProcessingException | SQLException e) {
             getLogger().log(
                     Level.WARNING,
@@ -229,11 +228,6 @@ public final class MofuEventAssist extends JavaPlugin {
                     e
             );
         }
-    }
-
-    @EventHandler
-    public void onPlayerQuitEvent(PlayerQuitEvent event) {
-        getEventRegistry().clearEditor(event.getPlayer());
     }
 
 

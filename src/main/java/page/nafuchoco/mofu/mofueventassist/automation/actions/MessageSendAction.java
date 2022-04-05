@@ -16,23 +16,24 @@
 
 package page.nafuchoco.mofu.mofueventassist.automation.actions;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.bukkit.Bukkit;
 import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
-import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
+import page.nafuchoco.mofu.mofueventassist.automation.AutomationActionContext;
 
 import java.util.Objects;
 
 public class MessageSendAction extends AutomationAction {
 
-    public MessageSendAction(GameEvent gameEvent, ActionOptions actionOptions) {
-        super(gameEvent, actionOptions);
+    public MessageSendAction(@JsonProperty("options") ActionOptions actionOptions) {
+        super(actionOptions);
     }
 
     @Override
-    public void execute() {
+    public void execute(AutomationActionContext context) {
         MessageSendActionOptions options = (MessageSendActionOptions) getOptions();
-        getEvent().getEntrant().stream()
+        context.gameEvent().getEntrant().stream()
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
                 .forEach(p -> Bukkit.getServer().getScheduler().runTask(MofuEventAssist.getInstance(), () -> p.sendMessage(options.message())));

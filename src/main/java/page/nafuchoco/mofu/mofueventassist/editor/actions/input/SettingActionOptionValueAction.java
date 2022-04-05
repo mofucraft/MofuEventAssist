@@ -25,17 +25,24 @@ import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
 import page.nafuchoco.mofu.mofueventassist.editor.actions.BaseEventInputAction;
 import page.nafuchoco.mofu.mofueventassist.utils.EditorMenuGenerator;
 
-public class SetEventDescriptionAction extends BaseEventInputAction {
+public class SettingActionOptionValueAction extends BaseEventInputAction {
 
-    public SetEventDescriptionAction(EventEditor editor) {
+    public SettingActionOptionValueAction(EventEditor editor) {
         super(editor);
     }
 
+    private String optionName;
+
+    public void setOptionName(String optionName) {
+        this.optionName = optionName;
+    }
+
+
     @Override
     public void execute(AsyncChatEvent event) {
-        getEditor().getBuilder().setEventDescription(PlainTextComponentSerializer.plainText().serialize(event.message()));
+        getEditor().getActionBuilder().setAutomationActionOption(optionName, PlainTextComponentSerializer.plainText().serialize(event.message()));
         getEditor().setWaitingAction(null);
         Bukkit.getServer().getScheduler().runTask(MofuEventAssist.getInstance(),
-                () -> event.getPlayer().openInventory(EditorMenuGenerator.getMainMenu(new EditorMenuHolder(getEditor()))));
+                () -> event.getPlayer().openInventory(EditorMenuGenerator.getActionOptionMenu(new EditorMenuHolder(getEditor()))));
     }
 }

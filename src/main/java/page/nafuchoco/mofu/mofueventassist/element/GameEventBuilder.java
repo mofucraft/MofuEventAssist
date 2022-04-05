@@ -44,8 +44,8 @@ public class GameEventBuilder {
         entrant = new ArrayList<>();
     }
 
-    public DefaultGameEvent build() {
-        if (eventName == null || eventDescription == null || eventOwner == null)
+    public DefaultGameEvent build() throws IllegalStateException {
+        if (!canBuild())
             throw new IllegalStateException("The configuration required for the build has not been completed.");
 
         return new DefaultGameEvent(
@@ -60,6 +60,12 @@ public class GameEventBuilder {
                 entrant,
                 eventOptions
         );
+    }
+
+    public boolean canBuild() {
+        if (eventName == null || eventDescription == null || eventOwner == null || eventStartTime == 0 || eventEndTime == 0)
+            return false;
+        return true;
     }
 
     public GameEventBuilder setEventName(@NonNull String eventName) {

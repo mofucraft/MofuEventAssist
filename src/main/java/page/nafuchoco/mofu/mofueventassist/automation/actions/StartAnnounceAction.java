@@ -16,17 +16,18 @@
 
 package page.nafuchoco.mofu.mofueventassist.automation.actions;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
-import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
+import page.nafuchoco.mofu.mofueventassist.automation.AutomationActionContext;
 
 public class StartAnnounceAction extends AutomationAction {
 
-    public StartAnnounceAction(GameEvent gameEvent, ActionOptions actionOptions) {
-        super(gameEvent, actionOptions);
+    public StartAnnounceAction(@JsonProperty("options") ActionOptions actionOptions) {
+        super(actionOptions);
     }
 
     @Override
-    public void execute() {
+    public void execute(AutomationActionContext context) {
 
     }
 }

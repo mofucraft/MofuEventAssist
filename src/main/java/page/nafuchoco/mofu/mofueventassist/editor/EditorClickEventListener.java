@@ -37,8 +37,8 @@ public class EditorClickEventListener implements Listener {
 
                 event.getInventory().close();
 
-                var waitingAction = editorHolder.getEditor().getWaitingAction();
-                if (waitingAction != null && waitingAction instanceof BaseEventEditorAction action) { // 操作待ちの場合は該当アクションを実行する
+                if (editorHolder.getEditor() != null
+                        && editorHolder.getEditor().getWaitingAction() instanceof BaseEventEditorAction action) { // 操作待ちの場合は該当アクションを実行する
                     try {
                         action.execute(event);
                     } catch (Exception e) {
@@ -50,19 +50,20 @@ public class EditorClickEventListener implements Listener {
                     }
                 } else {
                     var editorAction = editorHolder.getAction(event.getSlot());
-
-                    try {
-                        editorAction.execute(event);
-                    } catch (Exception e) {
-                        MofuEventAssist.getInstance().getLogger().log(
-                                Level.WARNING,
-                                "An error occurred while executing the editor action.",
-                                e
-                        );
+                    if (editorAction == null) {
+                        event.setCancelled(true);
+                    } else {
+                        try {
+                            editorAction.execute(event);
+                        } catch (Exception e) {
+                            MofuEventAssist.getInstance().getLogger().log(
+                                    Level.WARNING,
+                                    "An error occurred while executing the editor action.",
+                                    e
+                            );
+                        }
                     }
                 }
-
-                MofuEventAssist.getInstance().getLogger().log(Level.INFO, "[Debug] " + editorHolder.getEditor().getBuilder().toString());
             }
         }
     }

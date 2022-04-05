@@ -16,6 +16,7 @@
 
 package page.nafuchoco.mofu.mofueventassist.command;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -39,15 +40,28 @@ public class CreateCommand implements SubCommandExecutor {
             if (args.length == 0) {
 
             } else switch (args[0]) {
-                case "newevent": {
+                case "event": {
                     EventEditor editor = new EventEditor();
                     EditorMenuHolder holder = new EditorMenuHolder(editor);
                     editor.getBuilder().setEventOwner(player.getUniqueId());
                     player.openInventory(EditorMenuGenerator.getMainMenu(holder));
                 }
+                break;
+
+                case "automation": {
+                    EventEditor editor = new EventEditor();
+                    EditorMenuHolder holder = new EditorMenuHolder(editor);
+                    player.openInventory(EditorMenuGenerator.getEditEventAutomationMenu(holder));
+                }
+                break;
+
+                default:
+                    break;
             }
+        } else {
+            sender.sendMessage(ChatColor.RED + "This command can only be executed in-game.");
         }
-        return false;
+        return true;
     }
 
     @Override

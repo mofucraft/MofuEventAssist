@@ -21,6 +21,7 @@ import page.nafuchoco.mofu.mofueventassist.element.GameEventStatus;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventEndEvent;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventStartEvent;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class EventTimer implements Runnable {
@@ -33,13 +34,13 @@ public class EventTimer implements Runnable {
     @Override
     public void run() {
         var date = new Date();
-        eventRegistry.getEvents(GameEventStatus.UPCOMING).forEach(event -> {
+        new ArrayList<>(eventRegistry.getEvents(GameEventStatus.UPCOMING)).forEach(event -> {
             if (event.getEventStartTime() < date.getTime())
                 Bukkit.getServer().getPluginManager().callEvent(new GameEventStartEvent(event));
         });
 
-        eventRegistry.getEvents(GameEventStatus.HOLDING).forEach(event -> {
-            if (event.getEventEndTime() == 0 || event.getEventEndTime() > date.getTime())
+        new ArrayList<>(eventRegistry.getEvents(GameEventStatus.HOLDING)).forEach(event -> {
+            if (event.getEventEndTime() == 0 || event.getEventEndTime() < date.getTime())
                 Bukkit.getServer().getPluginManager().callEvent(new GameEventEndEvent(event));
         });
     }

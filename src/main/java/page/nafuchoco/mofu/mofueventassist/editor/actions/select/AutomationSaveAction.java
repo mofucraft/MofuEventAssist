@@ -17,22 +17,35 @@
 package page.nafuchoco.mofu.mofueventassist.editor.actions.select;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
+import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
 import page.nafuchoco.mofu.mofueventassist.editor.EditorMenuHolder;
 import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
 import page.nafuchoco.mofu.mofueventassist.editor.actions.BaseEventEditorAction;
 import page.nafuchoco.mofu.mofueventassist.utils.EditorMenuGenerator;
 
-public class SetLocationAction extends BaseEventEditorAction {
+public class AutomationSaveAction extends BaseEventEditorAction {
 
-    public SetLocationAction(EventEditor editor) {
+    public AutomationSaveAction(EventEditor editor) {
         super(editor);
     }
 
     @Override
     public void execute(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() instanceof EditorMenuHolder holder) {
-            getEditor().getBuilder().setEventLocation(event.getWhoClicked().getLocation());
-            event.getWhoClicked().openInventory(EditorMenuGenerator.getMainMenu(new EditorMenuHolder(getEditor())));
+        var automation = getEditor().getAutomationBuilder().build();
+        switch (getEditor().getAutomationType()) {
+            case 0:
+                getEditor().getBuiltEvent().getEventOptions().setStartAutomation(automation);
+                MofuEventAssist.getInstance().getEventRegistry().updateEventOptions(getEditor().getBuiltEvent());
+                break;
+
+            case 1:
+                getEditor().getBuiltEvent().getEventOptions().setEndAutomation(automation);
+                MofuEventAssist.getInstance().getEventRegistry().updateEventOptions(getEditor().getBuiltEvent());
+                break;
+
+            default:
+                event.getWhoClicked().openInventory(EditorMenuGenerator.getAutomationActionListMenu(new EditorMenuHolder(getEditor())));
+                break;
         }
     }
 }

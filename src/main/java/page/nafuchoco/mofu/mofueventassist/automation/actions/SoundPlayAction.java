@@ -16,23 +16,24 @@
 
 package page.nafuchoco.mofu.mofueventassist.automation.actions;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.bukkit.Bukkit;
 import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
-import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
+import page.nafuchoco.mofu.mofueventassist.automation.AutomationActionContext;
 
 import java.util.Objects;
 
 public class SoundPlayAction extends AutomationAction {
 
-    public SoundPlayAction(GameEvent gameEvent, ActionOptions actionOptions) {
-        super(gameEvent, actionOptions);
+    public SoundPlayAction(@JsonProperty("options") ActionOptions actionOptions) {
+        super(actionOptions);
     }
 
     @Override
-    public void execute() { // 参加者全員に指定されたサウンドを再生する。
+    public void execute(AutomationActionContext context) { // 参加者全員に指定されたサウンドを再生する。
         SoundPlayActionOptions options = (SoundPlayActionOptions) getOptions();
-        getEvent().getEntrant().stream()
+        context.gameEvent().getEntrant().stream()
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
                 .forEach(p -> Bukkit.getServer().getScheduler().runTask(MofuEventAssist.getInstance(), () -> {

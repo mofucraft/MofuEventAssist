@@ -16,6 +16,7 @@
 
 package page.nafuchoco.mofu.mofueventassist.automation.actions;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -23,24 +24,24 @@ import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
-import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
+import page.nafuchoco.mofu.mofueventassist.automation.AutomationActionContext;
 
 import java.util.Objects;
 
 public class TitleShowAction extends AutomationAction {
 
-    public TitleShowAction(GameEvent gameEvent, ActionOptions actionOptions) {
-        super(gameEvent, actionOptions);
+    public TitleShowAction(@JsonProperty("options") ActionOptions actionOptions) {
+        super(actionOptions);
     }
 
     @Override
-    public void execute() {
+    public void execute(AutomationActionContext context) {
         TitleShowActionOptions options = (TitleShowActionOptions) getOptions();
         TextComponent titleComponent =
                 Component.text(options.title()).color(NamedTextColor.NAMES.value(options.titleColorName()));
         TextComponent subTitleComponent =
                 Component.text(options.subTitle()).color(NamedTextColor.NAMES.value(options.subTitleColorName()));
-        getEvent().getEntrant().stream()
+        context.gameEvent().getEntrant().stream()
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
                 .forEach(p -> Bukkit.getServer().getScheduler().runTask(MofuEventAssist.getInstance(), () -> {

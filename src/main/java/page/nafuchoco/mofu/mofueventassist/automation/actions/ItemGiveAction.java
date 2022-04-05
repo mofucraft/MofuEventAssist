@@ -16,28 +16,29 @@
 
 package page.nafuchoco.mofu.mofueventassist.automation.actions;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
-import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
+import page.nafuchoco.mofu.mofueventassist.automation.AutomationActionContext;
 
 import java.util.Objects;
 
 public class ItemGiveAction extends AutomationAction {
 
-    public ItemGiveAction(GameEvent gameEvent, ActionOptions actionOptions) {
-        super(gameEvent, actionOptions);
+    public ItemGiveAction(@JsonProperty("options") ActionOptions actionOptions) {
+        super(actionOptions);
     }
 
     @Override
-    public void execute() {
+    public void execute(AutomationActionContext context) {
         ItemGiveActionOptions options = (ItemGiveActionOptions) getOptions();
         ItemStack itemStack = new ItemStack(Material.getMaterial(options.materialName()));
         itemStack.setAmount(NumberUtils.toInt(options.amount(), 1));
-        getEvent().getEntrant().stream()
+        context.gameEvent().getEntrant().stream()
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
                 .forEach(p -> Bukkit.getServer().getScheduler().runTask(MofuEventAssist.getInstance(), () -> p.getInventory().addItem(itemStack)));

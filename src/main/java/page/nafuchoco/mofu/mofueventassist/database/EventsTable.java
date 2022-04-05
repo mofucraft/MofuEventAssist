@@ -125,8 +125,8 @@ public class EventsTable extends DatabaseTable {
             ps.setString(3, eventDescription);
             ps.setString(4, eventOwner.toString());
             ps.setString(5, eventStatus.name());
-            ps.setDate(6, new Date(eventStartTime));
-            ps.setDate(7, new Date(eventEndTime));
+            ps.setTimestamp(6, new Timestamp(eventStartTime));
+            ps.setTimestamp(7, new Timestamp(eventEndTime));
             ps.setString(8, locationJson);
             ps.setString(9, entrantJson);
             ps.setString(10, eventOptionsJson);
@@ -136,6 +136,7 @@ public class EventsTable extends DatabaseTable {
     }
 
     public void updateEventStatus(GameEvent gameEvent) throws SQLException {
+        MofuEventAssist.getInstance().getLogger().info("Updated sql event status: " + gameEvent.getEventName() + "(Id: " + gameEvent.getEventId() + ")");
         var eventId = gameEvent.getEventId();
         var eventStatus = gameEvent.getEventStatus().name();
         try (Connection connection = getConnector().getConnection();
@@ -166,6 +167,24 @@ public class EventsTable extends DatabaseTable {
         }
     }
 
+    public void updateEventOptions(GameEvent gameEvent) throws JsonProcessingException, SQLException {
+        var eventId = gameEvent.getEventId();
+        String eventOptionsJson = null;
+
+        if (gameEvent.getEventOptions() != null)
+            eventOptionsJson = MAPPER.writeValueAsString(gameEvent.getEventOptions());
+
+        try (Connection connection = getConnector().getConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     "UPDATE " + getTablename() + " SET event_options = ? WHERE id= ?"
+             )) {
+            ps.setString(1, eventOptionsJson);
+            ps.setString(2, eventId.toString());
+
+            ps.execute();
+        }
+    }
+
     public void deleteEvent(UUID eventId) throws SQLException {
         try (Connection connection = getConnector().getConnection();
              PreparedStatement ps = connection.prepareStatement(
@@ -182,8 +201,8 @@ public class EventsTable extends DatabaseTable {
         var eventDescription = resultSet.getString("description");
         var eventOwner = UUID.fromString(resultSet.getString("owner_id"));
         var eventStatus = GameEventStatus.valueOf(resultSet.getString("event_status"));
-        var eventStartTime = resultSet.getDate("start_date").getTime();
-        var eventEndTime = resultSet.getDate("end_date").getTime();
+        var eventStartTime = resultSet.getTimestamp("start_date").getTime();
+        var eventEndTime = resultSet.getTimestamp("end_date").getTime();
 
         var locationJson = resultSet.getString("location");
         var entrantJson = resultSet.getString("entrant");

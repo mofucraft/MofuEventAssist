@@ -16,6 +16,7 @@
 
 package page.nafuchoco.mofu.mofueventassist.automation;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import page.nafuchoco.mofu.mofueventassist.automation.actions.AutomationAction;
 
 import java.util.Collections;
@@ -25,7 +26,7 @@ public class EventAutomation {
     private final List<AutomationAction> actions;
     private final int automationDelayTime;
 
-    public EventAutomation(List<AutomationAction> actions, int automationDelayTime) {
+    public EventAutomation(@JsonProperty("actions") List<AutomationAction> actions, @JsonProperty("automationDelayTime") int automationDelayTime) {
         this.actions = actions;
         this.automationDelayTime = automationDelayTime;
     }
