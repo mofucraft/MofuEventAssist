@@ -16,7 +16,8 @@
 
 package page.nafuchoco.mofu.mofueventassist.automation.actions;
 
-import org.bukkit.*;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import page.nafuchoco.mofu.mofueventassist.automation.ActionOptions;
 
 /**
@@ -40,10 +41,8 @@ public record SoundPlayActionOptions(String soundType, String soundCategory,
         return SoundCategory.valueOf(soundCategory);
     }
 
-    public Location getLocation() {
-        String[] loc = location.split(", ");
-        World world = Bukkit.getWorld(loc[0]);
-        return new Location(world, Double.valueOf(loc[1]), Double.valueOf(loc[2]), Double.valueOf(loc[3]));
+    public String getLocation() {
+        return location;
     }
 
     public float getVolume() {
