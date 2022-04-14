@@ -119,6 +119,8 @@ public final class MofuEventAssist extends JavaPlugin implements Listener {
     public void onDisable() {
         // Plugin shutdown logic
         Bukkit.getServer().getScheduler().cancelTasks(this);
+        if (connector != null)
+            connector.close();
     }
 
 
