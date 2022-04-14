@@ -35,6 +35,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class EventCommand implements SubCommandExecutor {
@@ -46,13 +47,6 @@ public class EventCommand implements SubCommandExecutor {
             if (args.length == 0) {
 
             } else switch (args[0]) {
-                case "editor": {
-                    // todo
-                    // イベントの設定は要素を横並びに。クリックで選択された要素の編集を開始
-                    // オートメーションの作成は要素が割り当てられたステンドグラスを並び替え
-                }
-                break;
-
                 case "show": {
                     // 登録済みのすべてのイベントを表示する
                     var events = MofuEventAssist.getInstance().getEventRegistry().getEvents(GameEventStatus.UPCOMING);
@@ -109,6 +103,6 @@ public class EventCommand implements SubCommandExecutor {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        return null;
+        return Arrays.asList("show", "entry");
     }
 }

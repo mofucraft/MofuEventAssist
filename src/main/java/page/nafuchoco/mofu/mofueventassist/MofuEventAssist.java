@@ -139,7 +139,9 @@ public final class MofuEventAssist extends JavaPlugin implements Listener {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         SubCommandExecutor executor = getSubCommand(args);
-        if (executor != null)
+        if (args.length == 1)
+            return subCommands.keySet().stream().toList();
+        else if (executor != null)
             return executor.onTabComplete(sender, command, alias, Arrays.copyOfRange(args, 1, args.length));
         return null;
     }

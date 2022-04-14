@@ -27,6 +27,7 @@ import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
 import page.nafuchoco.mofu.mofueventassist.element.GameEventBuilder;
 import page.nafuchoco.mofu.mofueventassist.utils.EditorMenuGenerator;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,6 @@ public class CreateCommand implements SubCommandExecutor {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        return null;
+        return Arrays.asList("event", "automation");
     }
 }
