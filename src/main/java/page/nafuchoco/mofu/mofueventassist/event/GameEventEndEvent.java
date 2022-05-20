@@ -28,7 +28,7 @@ public class GameEventEndEvent extends GameEventStatusUpdateEvent {
         super(gameEvent, GameEventStatus.HOLDING, GameEventStatus.ENDED);
     }
 
-    
+
     public static HandlerList getHandlerList() {
         return handlers;
     }

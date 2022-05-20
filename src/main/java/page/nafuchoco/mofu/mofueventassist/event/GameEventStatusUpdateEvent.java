@@ -23,8 +23,8 @@ import page.nafuchoco.mofu.mofueventassist.element.GameEventStatus;
 
 public class GameEventStatusUpdateEvent extends GameEventEvent {
     private static final HandlerList handlers = new HandlerList();
-    private GameEventStatus oldStatus;
-    private GameEventStatus newStatus;
+    private final GameEventStatus oldStatus;
+    private final GameEventStatus newStatus;
 
     public GameEventStatusUpdateEvent(GameEvent gameEvent, GameEventStatus oldStatus, GameEventStatus newStatus) {
         super(gameEvent);

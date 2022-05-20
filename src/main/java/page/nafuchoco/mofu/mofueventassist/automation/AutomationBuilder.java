@@ -89,7 +89,8 @@ public class AutomationBuilder {
                 eventAutomationAction = (AutomationAction) automationActionType.getActionClass().getDeclaredConstructor(
                         ActionOptions.class
                 ).newInstance(actionOptions);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                     NoSuchMethodException e) {
                 e.printStackTrace();
                 return null;
             }
@@ -98,9 +99,7 @@ public class AutomationBuilder {
         }
 
         public boolean canBuild() {
-            if (automationActionOptionsMap != null && automationActionOptionsMap.values().stream().noneMatch(Objects::isNull))
-                return true;
-            return false;
+            return automationActionOptionsMap != null && automationActionOptionsMap.values().stream().noneMatch(Objects::isNull);
         }
 
 

@@ -23,7 +23,7 @@ import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
 
 public class GameEventPlayerEntryEvent extends GameEventEvent {
     private static final HandlerList handlers = new HandlerList();
-    private Player player;
+    private final Player player;
 
     public GameEventPlayerEntryEvent(GameEvent gameEvent, Player player) {
         super(gameEvent);

@@ -26,7 +26,7 @@ public class EventOptions {
     private boolean enableStartCountdown;
     private boolean enableAutoDelete;
     */
-    
+
     private EventAutomation startAutomation;
     private EventAutomation endAutomation;
 }

@@ -63,9 +63,7 @@ public class GameEventBuilder {
     }
 
     public boolean canBuild() {
-        if (eventName == null || eventDescription == null || eventOwner == null || eventStartTime == 0 || eventEndTime == 0)
-            return false;
-        return true;
+        return eventName != null && eventDescription != null && eventOwner != null && eventStartTime != 0 && eventEndTime != 0;
     }
 
     public GameEventBuilder setEventName(@NonNull String eventName) {

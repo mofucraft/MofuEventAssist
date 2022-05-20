@@ -74,7 +74,7 @@ public class EditorMenuHolder implements InventoryHolder {
     }
 
 
-    private Map<Integer, EventEditorAction> menuActionMap = new HashMap<>();
+    private final Map<Integer, EventEditorAction> menuActionMap = new HashMap<>();
 
     public void addMenu(int index, @NotNull ItemStack itemStack, @Nullable Class<? extends BaseEventEditorAction> editorActionClass) {
         EventEditorAction editorAction = null;
@@ -83,7 +83,8 @@ public class EditorMenuHolder implements InventoryHolder {
                 editorAction = editorActionClass.getConstructor(EventEditor.class).newInstance(getEditor());
             getInventory().setItem(index, itemStack);
             menuActionMap.put(index, editorAction);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
             MofuEventAssist.getInstance().getLogger().log(
                     Level.WARNING,
                     "Failed to initialize EventEditorAction.\n" +
