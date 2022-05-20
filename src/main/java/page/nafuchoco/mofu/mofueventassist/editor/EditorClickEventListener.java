@@ -16,6 +16,7 @@
 
 package page.nafuchoco.mofu.mofueventassist.editor;
 
+import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
@@ -47,6 +48,9 @@ public class EditorClickEventListener implements Listener {
                                 "An error occurred while executing the editor action.",
                                 e
                         );
+
+                        event.getWhoClicked().sendMessage(ChatColor.RED + "[MofuEventAssist] An error occurred while executing the editor action.");
+                        event.getWhoClicked().sendMessage(ChatColor.RED + e.getStackTrace()[0].toString());
                     }
                 } else {
                     var editorAction = editorHolder.getAction(event.getSlot());
@@ -61,6 +65,9 @@ public class EditorClickEventListener implements Listener {
                                     "An error occurred while executing the editor action.",
                                     e
                             );
+                            
+                            event.getWhoClicked().sendMessage(ChatColor.RED + "[MofuEventAssist] An error occurred while executing the editor action.");
+                            event.getWhoClicked().sendMessage(ChatColor.RED + e.getStackTrace()[0].toString());
                         }
                     }
                 }

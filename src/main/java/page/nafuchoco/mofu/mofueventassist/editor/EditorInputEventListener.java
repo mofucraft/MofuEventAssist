@@ -17,6 +17,7 @@
 package page.nafuchoco.mofu.mofueventassist.editor;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -47,6 +48,9 @@ public class EditorInputEventListener implements Listener {
                             "An error occurred while executing the editor action.",
                             e
                     );
+
+                    event.getPlayer().sendMessage(ChatColor.RED + "[MofuEventAssist] An error occurred while executing the editor action.");
+                    event.getPlayer().sendMessage(ChatColor.RED + e.getStackTrace()[0].toString());
                 }
             }
 
