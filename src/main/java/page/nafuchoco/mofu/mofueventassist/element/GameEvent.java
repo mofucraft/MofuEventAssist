@@ -18,6 +18,7 @@ package page.nafuchoco.mofu.mofueventassist.element;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventPlayerEntryEvent;
@@ -49,6 +50,9 @@ public interface GameEvent {
     EventOptions getEventOptions();
 
     default void entryEvent(Player player) {
-        Bukkit.getServer().getPluginManager().callEvent(new GameEventPlayerEntryEvent(this, player));
+        if (!getEntrant().contains(player.getUniqueId()))
+            Bukkit.getServer().getPluginManager().callEvent(new GameEventPlayerEntryEvent(this, player));
+        else
+            player.sendMessage(ChatColor.RED + "This event has already been entered.");
     }
 }
