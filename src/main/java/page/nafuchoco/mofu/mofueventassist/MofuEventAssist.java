@@ -177,7 +177,7 @@ public final class MofuEventAssist extends JavaPlugin implements Listener {
                 for (AutomationAction automationAction : event.getGameEvent().getEventOptions().getStartAutomation().getActions()) {
                     automationAction.execute(new AutomationActionContext(event.getGameEvent()));
                     try {
-                        Thread.sleep(event.getGameEvent().getEventOptions().getStartAutomation().getAutomationDelayTime() * 1000);
+                        Thread.sleep(event.getGameEvent().getEventOptions().getStartAutomation().getAutomationDelayTime() * 1000L);
                     } catch (InterruptedException e) {
                         getLogger().log(Level.WARNING,
                                 """
@@ -202,7 +202,7 @@ public final class MofuEventAssist extends JavaPlugin implements Listener {
                 for (AutomationAction automationAction : event.getGameEvent().getEventOptions().getEndAutomation().getActions()) {
                     automationAction.execute(new AutomationActionContext(event.getGameEvent()));
                     try {
-                        Thread.sleep(event.getGameEvent().getEventOptions().getEndAutomation().getAutomationDelayTime() * 1000);
+                        Thread.sleep(event.getGameEvent().getEventOptions().getEndAutomation().getAutomationDelayTime() * 1000L);
                     } catch (InterruptedException e) {
                         getLogger().log(Level.WARNING,
                                 """

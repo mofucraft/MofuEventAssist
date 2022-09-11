@@ -114,8 +114,7 @@ public class AutomationBuilder {
                 getOptionFields().forEach(f -> automationActionOptionsMap.put(f, null));
             }
 
-            if (automationActionOptionsMap.containsKey(field))
-                automationActionOptionsMap.put(field, value);
+            automationActionOptionsMap.computeIfAbsent(field, key -> value);
             return this;
         }
 

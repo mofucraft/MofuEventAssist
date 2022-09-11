@@ -65,7 +65,7 @@ public class EditorClickEventListener implements Listener {
                                     "An error occurred while executing the editor action.",
                                     e
                             );
-                            
+
                             event.getWhoClicked().sendMessage(ChatColor.RED + "[MofuEventAssist] An error occurred while executing the editor action.");
                             event.getWhoClicked().sendMessage(ChatColor.RED + e.getStackTrace()[0].toString());
                         }

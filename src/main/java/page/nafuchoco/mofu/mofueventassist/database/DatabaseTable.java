@@ -21,12 +21,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public abstract class DatabaseTable {
-    private final String prefix;
     private final String tablename;
     private final DatabaseConnector connector;
 
-    public DatabaseTable(String prefix, String tablename, DatabaseConnector connector) {
-        this.prefix = prefix;
+    protected DatabaseTable(String prefix, String tablename, DatabaseConnector connector) {
         this.tablename = prefix + tablename;
         this.connector = connector;
     }

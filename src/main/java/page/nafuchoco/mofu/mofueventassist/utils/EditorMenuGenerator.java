@@ -34,13 +34,14 @@ import java.util.Arrays;
 import java.util.List;
 
 public class EditorMenuGenerator {
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 
-    public EditorMenuGenerator() {
+    private EditorMenuGenerator() {
         throw new UnsupportedOperationException();
     }
 
     public static Inventory getMainMenu(EditorMenuHolder holder) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+
         holder.setEditorName("Create new event");
         holder.setSize(9);
 

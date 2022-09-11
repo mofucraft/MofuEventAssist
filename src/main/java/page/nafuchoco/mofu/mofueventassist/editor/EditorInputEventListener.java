@@ -54,7 +54,7 @@ public class EditorInputEventListener implements Listener {
                 }
             }
 
-            MofuEventAssist.getInstance().getLogger().log(Level.INFO, "[Debug] " + editor.getBuilder().toString());
+            MofuEventAssist.getInstance().getLogger().log(Level.INFO, "[Debug] {0}", editor.getBuilder());
         }
     }
 
