@@ -42,7 +42,7 @@ public class EditorMenuGenerator {
     public static Inventory getMainMenu(EditorMenuHolder holder) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 
-        holder.setEditorName("Create new event");
+        holder.setMenuName("Create new event");
         holder.setSize(9);
 
         // 名前の設定
@@ -109,7 +109,7 @@ public class EditorMenuGenerator {
     }
 
     public static Inventory getActionMenu(EditorMenuHolder holder) { // TODO: 2022/04/06 組み直し
-        holder.setEditorName("Create new event -> Set Event Automation");
+        holder.setMenuName("Create new event -> Set Event Automation");
         holder.setSize(9);
 
         // 開始アクションの設定
@@ -153,7 +153,7 @@ public class EditorMenuGenerator {
     }
 
     public static Inventory getStartEndSelectMenu(EditorMenuHolder holder) {
-        holder.setEditorName("Start/End Selector");
+        holder.setMenuName("Start/End Selector");
         holder.setSize(9);
 
         var itemStackS = new ItemStack(Material.RED_STAINED_GLASS_PANE);
@@ -214,7 +214,7 @@ public class EditorMenuGenerator {
     }
 
     public static Inventory getAutomationActionListMenu(EditorMenuHolder holder) {
-        holder.setEditorName("Automation Editor");
+        holder.setMenuName("Automation Editor");
         holder.setSize(27);
 
         if (holder.getEditor().getAutomationBuilder().getActions().size() < 18) {

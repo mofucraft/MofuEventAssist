@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
 import page.nafuchoco.mofu.mofueventassist.editor.EditorMenuHolder;
+import page.nafuchoco.mofu.mofueventassist.editor.NoActionMenuHolder;
 import page.nafuchoco.mofu.mofueventassist.editor.actions.select.EntryEventAction;
 import page.nafuchoco.mofu.mofueventassist.element.GameEventStatus;
 
@@ -50,7 +51,7 @@ public class EventCommand implements SubCommandExecutor {
                 case "show": {
                     // 登録済みのすべてのイベントを表示する
                     var events = MofuEventAssist.getInstance().getEventRegistry().getEvents(GameEventStatus.UPCOMING);
-                    var inventory = Bukkit.getServer().createInventory(player, 36, "Upcoming Events");
+                    var inventory = new NoActionMenuHolder("Upcoming Events", 36).getInventory();
                     events.stream().forEach(event -> {
                         var eventItem = new ItemStack(Material.BOOK);
                         var eventItemMeta = eventItem.getItemMeta();

@@ -34,7 +34,7 @@ public class CalendarInventoryGenerator {
     }
 
     public static Inventory getYearSelector(EditorMenuHolder holder, Class<? extends BaseEventEditorAction> editorActionClass) {
-        holder.setEditorName("Year Selector");
+        holder.setMenuName("Year Selector");
         holder.setSize(9);
 
         var year = Calendar.getInstance().get(Calendar.YEAR);
@@ -52,7 +52,7 @@ public class CalendarInventoryGenerator {
     }
 
     public static Inventory getMonthSelector(EditorMenuHolder holder, Class<? extends BaseEventEditorAction> editorActionClass) {
-        holder.setEditorName("Month Selector");
+        holder.setMenuName("Month Selector");
         holder.setSize(36);
 
         // - - -  1  2  3 - - -
@@ -81,7 +81,7 @@ public class CalendarInventoryGenerator {
     }
 
     public static Inventory getDateSelector(EditorMenuHolder holder, Class<? extends BaseEventEditorAction> editorActionClass, int year, int month) {
-        holder.setEditorName("Date Selector");
+        holder.setMenuName("Date Selector");
         holder.setSize(45);
 
         // -  1  2  3  4  5  6  7 -
@@ -120,7 +120,7 @@ public class CalendarInventoryGenerator {
     }
 
     public static Inventory getHourSelector(EditorMenuHolder holder, Class<? extends BaseEventEditorAction> editorActionClass) {
-        holder.setEditorName("Hour Selector");
+        holder.setMenuName("Hour Selector");
         holder.setSize(36);
 
         // - - -  1  2  3 - - -
@@ -148,7 +148,7 @@ public class CalendarInventoryGenerator {
     }
 
     public static Inventory getAMPMSelector(EditorMenuHolder holder, Class<? extends BaseEventEditorAction> editorActionClass) {
-        holder.setEditorName("AM/PM Selector");
+        holder.setMenuName("AM/PM Selector");
         holder.setSize(9);
 
         var itemStackA = new ItemStack(Material.RED_STAINED_GLASS_PANE);
@@ -166,7 +166,7 @@ public class CalendarInventoryGenerator {
     }
 
     public static Inventory getMinutesSelector(EditorMenuHolder holder, Class<? extends BaseEventEditorAction> editorActionClass) {
-        holder.setEditorName("Minutes Selector");
+        holder.setMenuName("Minutes Selector");
         holder.setSize(9);
 
         for (int minutes = 0; minutes < 4; minutes++) {

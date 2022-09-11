@@ -24,6 +24,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +39,7 @@ import page.nafuchoco.mofu.mofueventassist.database.DatabaseConnector;
 import page.nafuchoco.mofu.mofueventassist.database.EventsTable;
 import page.nafuchoco.mofu.mofueventassist.editor.EditorClickEventListener;
 import page.nafuchoco.mofu.mofueventassist.editor.EditorInputEventListener;
+import page.nafuchoco.mofu.mofueventassist.editor.NoActionMenuHolder;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventEndEvent;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventPlayerEntryEvent;
 import page.nafuchoco.mofu.mofueventassist.event.GameEventStartEvent;
@@ -154,6 +157,19 @@ public final class MofuEventAssist extends JavaPlugin implements Listener {
         return executor;
     }
 
+
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryClickEvent(InventoryClickEvent event) {
+        if (event.getClickedInventory() != null)
+            if (event.getClickedInventory().getHolder() instanceof NoActionMenuHolder)
+                event.setCancelled(true);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryDragEvent(InventoryDragEvent event) {
+        if (event.getInventory().getHolder() instanceof NoActionMenuHolder)
+            event.setCancelled(true);
+    }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onGameEventStatusUpdateEvent(GameEventStatusUpdateEvent event) {

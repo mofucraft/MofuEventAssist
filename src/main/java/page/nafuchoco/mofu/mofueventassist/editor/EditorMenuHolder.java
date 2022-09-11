@@ -16,9 +16,6 @@
 
 package page.nafuchoco.mofu.mofueventassist.editor;
 
-import org.bukkit.Bukkit;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,42 +28,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class EditorMenuHolder implements InventoryHolder {
+public class EditorMenuHolder extends MenuHolder {
     private final EventEditor editor;
-    private String editorName = "Event Editor Menu";
-    private int size = 27;
-    private Inventory inventory;
 
 
     public EditorMenuHolder(EventEditor editor) {
+        super();
         this.editor = editor;
     }
 
     public EditorMenuHolder(EventEditor editor, String editorName) {
+        super(editorName);
         this.editor = editor;
-        this.editorName = editorName;
     }
 
     public EditorMenuHolder(EventEditor editor, String editorName, int size) {
+        super(editorName, size);
         this.editor = editor;
-        this.editorName = editorName;
-        this.size = size;
-    }
-
-
-    public void setEditorName(String editorName) {
-        this.editorName = editorName;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-    @Override
-    public @NotNull Inventory getInventory() {
-        if (inventory == null)
-            inventory = Bukkit.getServer().createInventory(this, size, editorName);
-        return inventory;
     }
 
     public EventEditor getEditor() {
