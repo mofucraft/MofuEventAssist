@@ -61,6 +61,7 @@ public class SettingActionOptionAction extends BaseEventEditorAction {
 
                         nextInventory = EditorMenuGenerator.getActionOptionMenu(new EditorMenuHolder(getEditor()));
                     } catch (IllegalArgumentException e) {
+                        getEditor().setActionBuilder(null);
                         nextInventory = EditorMenuGenerator.getAutomationSelectMenu(new EditorMenuHolder(getEditor()));
                     }
                 }
