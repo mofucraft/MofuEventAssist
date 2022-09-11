@@ -61,12 +61,12 @@ public class SetEndDateAction extends BaseEventEditorAction {
                     nextInventory = CalendarInventoryGenerator.getDateSelector(new EditorMenuHolder(getEditor()), this.getClass(), year, month);
                 } else if (date == -1) {
                     date = value;
-                    nextInventory = CalendarInventoryGenerator.getHourSelector(new EditorMenuHolder(getEditor()), this.getClass());
-                } else if (hour == -1) {
-                    hour = value;
                     nextInventory = CalendarInventoryGenerator.getAMPMSelector(new EditorMenuHolder(getEditor()), this.getClass());
                 } else if (pm == -1) {
                     pm = value;
+                    nextInventory = CalendarInventoryGenerator.getHourSelector(new EditorMenuHolder(getEditor()), this.getClass(), pm == 0);
+                } else if (hour == -1) {
+                    hour = value;
                     nextInventory = CalendarInventoryGenerator.getMinutesSelector(new EditorMenuHolder(getEditor()), this.getClass());
                 } else if (minutes == -1) {
                     minutes = value;

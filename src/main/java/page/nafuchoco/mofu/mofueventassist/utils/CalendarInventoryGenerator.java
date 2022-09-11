@@ -119,34 +119,6 @@ public class CalendarInventoryGenerator {
         return holder.getInventory();
     }
 
-    public static Inventory getHourSelector(EditorMenuHolder holder, Class<? extends BaseEventEditorAction> editorActionClass) {
-        holder.setMenuName("Hour Selector");
-        holder.setSize(36);
-
-        // - - -  1  2  3 - - -
-        // - - -  4  5  6 - - -
-        // - - -  7  8  9 - - -
-        // - - - 10 11 12 - - -
-        int line = 0;
-        int index = 2;
-        for (int hour = 1; hour <= 12; hour++) {
-            if (index == 9 * line + 5) {
-                index = index + 7;
-                line++;
-            } else {
-                index++;
-            }
-
-            var itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, hour);
-            val meta = itemStack.getItemMeta();
-            meta.displayName(Component.text(String.valueOf(hour)).asComponent());
-            itemStack.setItemMeta(meta);
-            holder.addMenu(index, itemStack, editorActionClass);
-        }
-
-        return holder.getInventory();
-    }
-
     public static Inventory getAMPMSelector(EditorMenuHolder holder, Class<? extends BaseEventEditorAction> editorActionClass) {
         holder.setMenuName("AM/PM Selector");
         holder.setSize(9);
@@ -161,6 +133,34 @@ public class CalendarInventoryGenerator {
         metaP.displayName(Component.text("PM").asComponent());
         itemStackP.setItemMeta(metaP);
         holder.addMenu(5, itemStackP, editorActionClass);
+
+        return holder.getInventory();
+    }
+
+    public static Inventory getHourSelector(EditorMenuHolder holder, Class<? extends BaseEventEditorAction> editorActionClass, boolean startZero) {
+        holder.setMenuName("Hour Selector");
+        holder.setSize(36);
+
+        // - - -  1  2  3 - - -
+        // - - -  4  5  6 - - -
+        // - - -  7  8  9 - - -
+        // - - - 10 11 12 - - -
+        int line = 0;
+        int index = 2;
+        for (int hour = startZero ? 0 : 1; hour <= 12 - (startZero ? 1 : 0); hour++) {
+            if (index == 9 * line + 5) {
+                index = index + 7;
+                line++;
+            } else {
+                index++;
+            }
+
+            var itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, hour == 0 ? 1 : hour);
+            val meta = itemStack.getItemMeta();
+            meta.displayName(Component.text(String.valueOf(hour)).asComponent());
+            itemStack.setItemMeta(meta);
+            holder.addMenu(index, itemStack, editorActionClass);
+        }
 
         return holder.getInventory();
     }
