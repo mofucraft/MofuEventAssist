@@ -78,6 +78,8 @@ public class SetStartDateAction extends BaseEventEditorAction {
                     calendar.set(Calendar.HOUR, hour);
                     calendar.set(Calendar.AM_PM, pm);
                     calendar.set(Calendar.MINUTE, minutes);
+                    calendar.set(Calendar.SECOND, 0);
+                    calendar.set(Calendar.MILLISECOND, 0);
                     getEditor().getBuilder().setEventStartTime(calendar.getTime().getTime());
 
                     getEditor().setWaitingAction(null);

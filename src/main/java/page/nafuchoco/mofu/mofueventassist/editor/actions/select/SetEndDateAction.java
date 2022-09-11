@@ -78,6 +78,8 @@ public class SetEndDateAction extends BaseEventEditorAction {
                     calendar.set(Calendar.HOUR, hour);
                     calendar.set(Calendar.AM_PM, pm);
                     calendar.set(Calendar.MINUTE, minutes);
+                    calendar.set(Calendar.SECOND, 0);
+                    calendar.set(Calendar.MILLISECOND, 0);
                     getEditor().getBuilder().setEventEndTime(calendar.getTime().getTime());
 
                     getEditor().setWaitingAction(null);
