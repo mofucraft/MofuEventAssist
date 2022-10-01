@@ -112,6 +112,8 @@ public class AutomationBuilder {
             if (automationActionOptionsMap == null) {
                 automationActionOptionsMap = new LinkedHashMap<>();
                 getOptionFields().forEach(f -> automationActionOptionsMap.put(f, null));
+
+                // TODO: 2022/10/01 Add check option value method 
             }
 
             automationActionOptionsMap.computeIfAbsent(field, key -> value);

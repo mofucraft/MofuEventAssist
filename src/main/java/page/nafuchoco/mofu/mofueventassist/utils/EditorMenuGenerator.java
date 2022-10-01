@@ -240,6 +240,7 @@ public class EditorMenuGenerator {
                     return actionStack;
                 }).toList();
         for (int i = 0; i < actionStacks.size(); i++) {
+            // TODO: 2022/09/11 設定済みのアクションをクリックした場合はなにもしないようにする
             holder.addMenu(i, actionStacks.get(i), SettingActionOptionAction.class);
         }
 
