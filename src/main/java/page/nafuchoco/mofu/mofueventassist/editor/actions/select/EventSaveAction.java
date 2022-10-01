@@ -22,6 +22,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
 import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
 import page.nafuchoco.mofu.mofueventassist.editor.actions.BaseEventEditorAction;
+import page.nafuchoco.mofu.mofueventassist.exception.EventRegisterException;
 
 public class EventSaveAction extends BaseEventEditorAction {
 
@@ -32,7 +33,11 @@ public class EventSaveAction extends BaseEventEditorAction {
     @Override
     public void execute(InventoryClickEvent event) {
         var gameEvent = getEditor().getBuilder().build();
-        MofuEventAssist.getInstance().getEventRegistry().registerEvent(gameEvent);
-        event.getWhoClicked().sendMessage(Component.text("Your event was saved correctly!").color(NamedTextColor.GREEN));
+        try {
+            MofuEventAssist.getInstance().getEventRegistry().registerEvent(gameEvent);
+            event.getWhoClicked().sendMessage(Component.text("Your event was saved correctly!").color(NamedTextColor.GREEN));
+        } catch (EventRegisterException e) {
+            event.getWhoClicked().sendMessage(Component.text("Some error occurred while saving the event.").color(NamedTextColor.RED));
+        }
     }
 }

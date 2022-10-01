@@ -16,11 +16,14 @@
 
 package page.nafuchoco.mofu.mofueventassist.editor.actions.select;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import page.nafuchoco.mofu.mofueventassist.MofuEventAssist;
 import page.nafuchoco.mofu.mofueventassist.editor.EditorMenuHolder;
 import page.nafuchoco.mofu.mofueventassist.editor.EventEditor;
 import page.nafuchoco.mofu.mofueventassist.editor.actions.BaseEventEditorAction;
+import page.nafuchoco.mofu.mofueventassist.exception.EventRegisterException;
 import page.nafuchoco.mofu.mofueventassist.utils.EditorMenuGenerator;
 
 public class AutomationSaveAction extends BaseEventEditorAction {
@@ -32,20 +35,24 @@ public class AutomationSaveAction extends BaseEventEditorAction {
     @Override
     public void execute(InventoryClickEvent event) {
         var automation = getEditor().getAutomationBuilder().build();
-        switch (getEditor().getAutomationType()) {
-            case 0:
-                getEditor().getBuiltEvent().getEventOptions().setStartAutomation(automation);
-                MofuEventAssist.getInstance().getEventRegistry().updateEventOptions(getEditor().getBuiltEvent());
-                break;
+        try {
+            switch (getEditor().getAutomationType()) {
+                case 0:
+                    getEditor().getBuiltEvent().getEventOptions().setStartAutomation(automation);
+                    MofuEventAssist.getInstance().getEventRegistry().updateEventOptions(getEditor().getBuiltEvent());
+                    break;
 
-            case 1:
-                getEditor().getBuiltEvent().getEventOptions().setEndAutomation(automation);
-                MofuEventAssist.getInstance().getEventRegistry().updateEventOptions(getEditor().getBuiltEvent());
-                break;
+                case 1:
+                    getEditor().getBuiltEvent().getEventOptions().setEndAutomation(automation);
+                    MofuEventAssist.getInstance().getEventRegistry().updateEventOptions(getEditor().getBuiltEvent());
+                    break;
 
-            default:
-                event.getWhoClicked().openInventory(EditorMenuGenerator.getAutomationActionListMenu(new EditorMenuHolder(getEditor())));
-                break;
+                default:
+                    event.getWhoClicked().openInventory(EditorMenuGenerator.getAutomationActionListMenu(new EditorMenuHolder(getEditor())));
+                    break;
+            }
+        } catch (EventRegisterException e) {
+            event.getWhoClicked().sendMessage(Component.text("Some error occurred while saving the event.").color(NamedTextColor.RED));
         }
     }
 }

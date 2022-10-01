@@ -22,6 +22,7 @@ import page.nafuchoco.mofu.mofueventassist.database.EventsTable;
 import page.nafuchoco.mofu.mofueventassist.element.DefaultGameEvent;
 import page.nafuchoco.mofu.mofueventassist.element.GameEvent;
 import page.nafuchoco.mofu.mofueventassist.element.GameEventStatus;
+import page.nafuchoco.mofu.mofueventassist.exception.EventRegisterException;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -34,7 +35,7 @@ public class GameEventRegistry {
 
     public GameEventRegistry(EventsTable eventsTable) throws SQLException {
         this.eventsTable = eventsTable;
-        eventStore = new HashMap<>();
+        eventStore = new EnumMap<>(GameEventStatus.class);
         eventStore.put(GameEventStatus.UPCOMING, eventsTable.getUpcomingEvents());
         eventStore.put(GameEventStatus.HOLDING, eventsTable.getHoldingEvents());
         eventStore.put(GameEventStatus.ENDED, new ArrayList<>());
@@ -64,6 +65,8 @@ public class GameEventRegistry {
                     "An error has occurred while registering event information.",
                     e
             );
+
+            throw new EventRegisterException("");
         }
     }
 
@@ -76,6 +79,8 @@ public class GameEventRegistry {
                     "An error has occurred while registering event information.",
                     e
             );
+
+            throw new EventRegisterException("");
         }
     }
 
@@ -89,6 +94,8 @@ public class GameEventRegistry {
                     "An error has occurred while registering event information.",
                     e
             );
+
+            throw new EventRegisterException("");
         }
     }
 
