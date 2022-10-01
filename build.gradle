@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'page.nafuchoco.mofu'
-version = '0.1.5'
+version = '0.1.6'
 
 shadowJar {
     archiveFileName.set(rootProject.name + '.' + archiveExtension.get())
