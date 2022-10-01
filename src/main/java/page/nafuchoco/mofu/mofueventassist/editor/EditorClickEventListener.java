@@ -30,7 +30,7 @@ public class EditorClickEventListener implements Listener {
 
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent event) {
-        if (event.getClickedInventory() != null) {
+        if (event.getClickedInventory() != null && event.getCurrentItem() != null) {
             var holder = event.getClickedInventory().getHolder();
             if (holder instanceof EditorMenuHolder editorHolder) {
                 if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) // ほかインベントリの移動は問答無用でキャンセルする
