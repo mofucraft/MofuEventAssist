@@ -16,6 +16,7 @@
 
 package page.nafuchoco.mofu.mofueventassist.command;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +28,9 @@ public class HelpCommand implements SubCommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        sender.sendMessage("============ " + ChatColor.AQUA + "MofuEventAssist" + ChatColor.RESET + "============ ");
+        sender.sendMessage("...Please see the wiki.");
+        sender.sendMessage("https://github.com/mofucraft/MofuEventAssist/wiki");
         return false;
     }
 
